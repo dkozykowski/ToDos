@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Task title"
+            android:textColor="@color/md_black_1000"
+            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ellipsize="end"
+            android:maxLength="300"
+            android:text="Task description"
+            android:textColor="@color/md_black_1000"
+            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:text="Date"
+            android:textColor="@color/md_black_1000"
+            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/description" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/importanceButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="12dp"
+            android:src="@drawable/ic_round_star_border_24"
+            app:layout_constraintBottom_toBottomOf="@+id/date"
+            app:layout_constraintEnd_toStartOf="@+id/doneCheckbox"
+            app:layout_constraintTop_toTopOf="@+id/title" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="12dp"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:layout_constraintBottom_toBottomOf="@+id/doneCheckbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/doneCheckbox" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/doneCheckbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/importanceButton"
+            app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+            app:layout_constraintTop_toTopOf="@+id/importanceButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
