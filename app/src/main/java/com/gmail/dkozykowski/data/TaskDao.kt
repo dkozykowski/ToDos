@@ -1,19 +1,25 @@
 package com.gmail.dkozykowski.data
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import com.gmail.dkozykowski.Task
+import androidx.room.*
+import com.gmail.dkozykowski.data.model.Task
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task")
-    fun getAllTasks(): List<Task>
+    @Query("SELECT * FROM task WHERE done = 'false'")
+    fun getAllActiveTasks(): List<Task>
+
+    @Query("SELECT * FROM task WHERE done = 'true'")
+    fun getDoneTasks(): List<Task>
+
+    @Query("SELECT * FROM task WHERE important = 'true' AND done = 'false'")
+    fun getImportantActiveTasks(): List<Task>
 
     @Insert
-    fun insertTask(task: Task)
+    fun insertTask(task: Task): Long
 
     @Delete
     fun deleteTask(task: Task)
+
+    @Update
+    fun updateTask(task: Task)
 }

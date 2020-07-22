@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

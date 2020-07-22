@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
 
 class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
@@ -17,7 +18,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         layoutParams = ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     }
 
-    fun bind(task: Task) {
+    fun bind(task: Task, deleteCallback: () -> Unit) {
         binding.title.text = task.title
         binding.description.text = task.description
         //todo(binding.date.text), (binding.time.text)
