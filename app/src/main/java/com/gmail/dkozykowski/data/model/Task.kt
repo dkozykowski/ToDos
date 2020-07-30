@@ -10,6 +10,6 @@ data class Task(
     @ColumnInfo val title: String,
     @ColumnInfo val description: String,
     @ColumnInfo val date: Long,
-    @ColumnInfo val important: Boolean,
-    @ColumnInfo val done: Boolean
+    @ColumnInfo var important: Boolean,
+    @ColumnInfo var done: Boolean
 )

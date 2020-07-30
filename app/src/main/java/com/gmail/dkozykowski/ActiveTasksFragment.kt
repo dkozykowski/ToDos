@@ -10,11 +10,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gmail.dkozykowski.QueryTaskType.ALL_ACTIVE
 import com.gmail.dkozykowski.databinding.FragmentActiveTasksBinding
 
 class ActiveTasksFragment : Fragment() {
     lateinit var binding: FragmentActiveTasksBinding
-    private val adapter by lazy { TaskAdapter() }
+    private val adapter by lazy { TaskAdapter(ALL_ACTIVE) }
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -27,6 +28,7 @@ class ActiveTasksFragment : Fragment() {
             this,
             ViewModelProvider.NewInstanceFactory()
         ).get(TaskViewModel::class.java)
+
         viewModel.loadTaskLiveData.observe(viewLifecycleOwner, Observer { viewState ->
             when (viewState) {
                 is TaskViewModel.LoadViewState.Error -> Toast.makeText(
@@ -38,7 +40,9 @@ class ActiveTasksFragment : Fragment() {
             }
             binding.swipeRefresh.isRefreshing = viewState is TaskViewModel.LoadViewState.Loading
         })
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks() }
+
+        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(ALL_ACTIVE) }
+
         return binding.root
     }
 
@@ -52,6 +56,6 @@ class ActiveTasksFragment : Fragment() {
             addItemDecoration(dividerItemDecoration)
             adapter = this@ActiveTasksFragment.adapter
         }
-        viewModel.loadTasks()
+        viewModel.loadTasks(ALL_ACTIVE)
     }
 }

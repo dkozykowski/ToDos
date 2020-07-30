@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +14,7 @@ class TaskViewModel : ViewModel() {
     val loadTaskLiveData = MutableLiveData<LoadViewState>()
     val sendTaskLiveData = MutableLiveData<SendViewState>()
 
-    fun loadTasks() {
+    fun loadTasks(querryType: QueryTaskType) {
         if (loadTaskLiveData.value == LoadViewState.Loading) return
 
         loadTaskLiveData.postValue(LoadViewState.Loading)
@@ -21,7 +22,11 @@ class TaskViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val tasks = DB.db.taskDao().getAllActiveTasks()
+                    val tasks = when(querryType) {
+                        QueryTaskType.IMPORTANT -> DB.db.taskDao().getImportantActiveTasks()
+                        QueryTaskType.ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
+                        QueryTaskType.DONE ->  DB.db.taskDao().getDoneTasks()
+                    }
                     loadTaskLiveData.postValue(LoadViewState.Success(tasks))
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -32,7 +37,7 @@ class TaskViewModel : ViewModel() {
     }
 
     fun sendTask(task: Task) {
-        if (sendTaskLiveData.value == SendViewState.Loading) return
+        if (sendTaskLiveData.value is SendViewState.Loading) return
 
         sendTaskLiveData.postValue(SendViewState.Loading)
 

@@ -18,14 +18,20 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         layoutParams = ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     }
 
-    fun bind(task: Task, deleteCallback: () -> Unit) {
+    fun bind(task: Task, deleteCallback: () -> Unit, updateCallback: (Task) -> Unit) {
         binding.title.text = task.title
         binding.description.text = task.description
-        //todo(binding.date.text), (binding.time.text)
+        binding.date.text = getDateFromLong(task.date)
         binding.doneCheckbox.isChecked = task.done
-        //todo binding.root setonclick
+        binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            task.done = isChecked
+            updateCallback(task)
+        }
+        binding.importantTaskCheckbox.setChecked(task.important, animate = false)
+        binding.importantTaskCheckbox.setOnCheckStateListener {
+            task.important = it
+            updateCallback(task)
+        }
         //todo binding delete setonclick
-        //todo binding star setonclick
-        //todo binding checkbox setonclick
     }
 }

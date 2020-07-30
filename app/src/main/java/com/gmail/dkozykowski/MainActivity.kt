@@ -34,5 +34,6 @@ class MainActivity : AppCompatActivity() {
         binding.newTaskButton.setOnClickListener {
             NewTaskDialog(this).show()
         }
+
     }
 }

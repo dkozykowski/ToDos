@@ -13,20 +13,22 @@ import java.util.*
 class NewTaskDialog(context: Context) : AlertDialog(context) {
     private val binding = DialogNewTaskBinding.inflate(LayoutInflater.from(context))
     private val viewModel: TaskViewModel = TaskViewModel()
-    private val sendTaskObserver: (TaskViewModel.SendViewState) -> Unit = {
+    private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
-            viewModel.loadTasks()
+            //updateCallback()
             dismiss()
         }
     }
 
+
     override fun show() {
         setView(binding.root)
         super.show()
-        viewModel.sendTaskLiveData.observeForever(sendTaskObserver)
+
+        viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 
         setOnDismissListener {
-            viewModel.sendTaskLiveData.removeObserver(sendTaskObserver)
+            viewModel.sendTaskLiveData.removeObserver(sendMessageObserver)
         }
 
         binding.addTaskButton.setOnClickListener {
@@ -34,7 +36,7 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
                 viewModel.sendTask(
                     Task(
                         0,
-                        binding.titleEditText.toString(),
+                        binding.titleEditText.text.toString(),
                         binding.descriptionEditText.text.toString(),
                         stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}"),
                         important = false,
@@ -48,13 +50,12 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
 
         binding.root.setOnClickListener {
             hideKeyboard(context, binding.root)
-            binding.dateEditText.clearFocus()
-            binding.timeEditText.clearFocus()
-            binding.descriptionEditText.clearFocus()
-            binding.titleEditText.clearFocus()
+            clearFocus()
         }
 
         binding.calendarButton.setOnClickListener {
+            hideKeyboard(context, binding.root)
+            clearFocus()
             val calendar = Calendar.getInstance()
             DatePickerDialog(
                 context,
@@ -68,6 +69,8 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
         }
 
         binding.timeButton.setOnClickListener {
+            hideKeyboard(context, binding.root)
+            clearFocus()
             val time = Calendar.getInstance()
             TimePickerDialog(
                 context,
@@ -79,5 +82,12 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
                 true
             ).show()
         }
+    }
+
+    private fun clearFocus() {
+        binding.dateEditText.clearFocus()
+        binding.timeEditText.clearFocus()
+        binding.descriptionEditText.clearFocus()
+        binding.titleEditText.clearFocus()
     }
 }

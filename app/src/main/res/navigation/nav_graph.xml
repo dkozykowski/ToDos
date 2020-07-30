@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/activeTasksFragment"
-        android:name="com.gmail.dkozykowski.ActiveTasksFragment"
+        android:name="com.gmail.dkozykowski.ImportantTasksFragment"
         android:label="ActiveTasksFragment" />
     <fragment
         android:id="@+id/importantTasksFragment"

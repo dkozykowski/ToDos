@@ -17,9 +17,11 @@
             android:layout_margin="16dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textSize="17dp"
+            android:fontFamily="sans-serif-medium"
             android:text="Task title"
             android:textColor="@color/md_black_1000"
-            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,8 +33,8 @@
             android:ellipsize="end"
             android:maxLength="300"
             android:text="Task description"
-            android:textColor="@color/md_black_1000"
-            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            android:textColor="@color/md_grey_700"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
@@ -44,52 +46,29 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:text="Date"
-            android:textColor="@color/md_black_1000"
-            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
+            android:textColor="@color/md_grey_700"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/description" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:ellipsize="end"
-            android:maxLength="10"
-            android:text="Date"
-            android:textColor="@color/md_black_1000"
-            app:layout_constraintEnd_toStartOf="@+id/importanceButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/description" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/importanceButton"
+        <com.gmail.dkozykowski.StarCheckboxView
+            android:id="@+id/importantTaskCheckbox"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="12dp"
-            android:src="@drawable/ic_round_star_border_24"
             app:layout_constraintBottom_toBottomOf="@+id/date"
             app:layout_constraintEnd_toStartOf="@+id/doneCheckbox"
             app:layout_constraintTop_toTopOf="@+id/title" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/deleteButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="12dp"
-            android:src="@drawable/ic_baseline_delete_24"
-            app:layout_constraintBottom_toBottomOf="@+id/doneCheckbox"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/doneCheckbox" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/doneCheckbox"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="12dp"
-            app:layout_constraintBottom_toBottomOf="@+id/importanceButton"
-            app:layout_constraintEnd_toStartOf="@+id/deleteButton"
-            app:layout_constraintTop_toTopOf="@+id/importanceButton" />
+            app:layout_constraintBottom_toBottomOf="@+id/importantTaskCheckbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/importantTaskCheckbox" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

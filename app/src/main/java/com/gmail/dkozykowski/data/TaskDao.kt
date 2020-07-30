@@ -5,13 +5,13 @@ import com.gmail.dkozykowski.data.model.Task
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task WHERE done = 'false'")
+    @Query("SELECT * FROM task WHERE not done")
     fun getAllActiveTasks(): List<Task>
 
-    @Query("SELECT * FROM task WHERE done = 'true'")
+    @Query("SELECT * FROM task WHERE done ")
     fun getDoneTasks(): List<Task>
 
-    @Query("SELECT * FROM task WHERE important = 'true' AND done = 'false'")
+    @Query("SELECT * FROM task WHERE important AND not done")
     fun getImportantActiveTasks(): List<Task>
 
     @Insert
