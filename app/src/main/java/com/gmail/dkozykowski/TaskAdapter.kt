@@ -39,7 +39,7 @@ class TaskAdapter(val queryType: QueryTaskType) : RecyclerView.Adapter<TaskAdapt
             data.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, data.size - 1)
-        }, updateCallback = { task ->
+        }, updateCallback = { task, context ->
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
                     try {
@@ -53,12 +53,18 @@ class TaskAdapter(val queryType: QueryTaskType) : RecyclerView.Adapter<TaskAdapt
             if (queryType == ALL_ACTIVE && !task.done) {
                 sortData()
                 notifyItemMoved(position, data.indexOfFirst { it.uid == task.uid })
-            } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
+            } else if (queryType != DONE && task.done) {
                 val index = data.indexOfFirst { it.uid == task.uid }
                 data.removeAt(index)
                 notifyItemRemoved(index)
                 notifyItemRangeChanged(index, data.size - 1)
-                //Toast.makeText(Context, "Task moved to done", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Task moved to done", Toast.LENGTH_SHORT).show()
+            } else if (queryType == DONE && !task.done) {
+                val index = data.indexOfFirst { it.uid == task.uid }
+                data.removeAt(index)
+                notifyItemRemoved(index)
+                notifyItemRangeChanged(index, data.size - 1)
+                Toast.makeText(context, "Task moved to active", Toast.LENGTH_SHORT).show()
             }
 //                        if (it.done && queryType == ALL_ACTIVE) { notifyItemRemoved(position) }
 //                        else if (!it.done && queryType == DONE) { notifyItemRemoved(position) }
