@@ -1,8 +1,10 @@
 package com.gmail.dkozykowski
 
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.gmail.dkozykowski.QueryTaskType.*
+import com.gmail.dkozykowski.QueryTaskType.ALL_ACTIVE
+import com.gmail.dkozykowski.QueryTaskType.DONE
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import kotlinx.coroutines.Dispatchers
@@ -37,20 +39,31 @@ class TaskAdapter(val queryType: QueryTaskType) : RecyclerView.Adapter<TaskAdapt
             data.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, data.size - 1)
-        }, updateCallback = {
+        }, updateCallback = { task ->
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
                     try {
-                        DB.db.taskDao().updateTask(it)
-//                        if (it.done && queryType == ALL_ACTIVE) { notifyItemRemoved(position) }
-//                        else if (!it.done && queryType == DONE) { notifyItemRemoved(position) }
-//                        else if (!it.important && queryType == IMPORTANT) { notifyItemRemoved(position) }
-//                        else if (it.done && queryType == IMPORTANT) { notifyItemRemoved(position) }
+                        DB.db.taskDao().updateTask(task)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
             }
+
+            if (queryType == ALL_ACTIVE && !task.done) {
+                sortData()
+                notifyItemMoved(position, data.indexOfFirst { it.uid == task.uid })
+            } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
+                val index = data.indexOfFirst { it.uid == task.uid }
+                data.removeAt(index)
+                notifyItemRemoved(index)
+                notifyItemRangeChanged(index, data.size - 1)
+                //Toast.makeText(Context, "Task moved to done", Toast.LENGTH_SHORT).show()
+            }
+//                        if (it.done && queryType == ALL_ACTIVE) { notifyItemRemoved(position) }
+//                        else if (!it.done && queryType == DONE) { notifyItemRemoved(position) }
+//                        else if (!it.important && queryType == IMPORTANT) { notifyItemRemoved(position) }
+//                        else if (it.done && queryType == IMPORTANT) { notifyItemRemoved(position) }
         })
     }
 
