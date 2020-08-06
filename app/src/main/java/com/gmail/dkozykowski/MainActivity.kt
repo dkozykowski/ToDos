@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -32,7 +34,8 @@ class MainActivity : AppCompatActivity() {
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 
         binding.newTaskButton.setOnClickListener {
-            NewTaskDialog(this).show()
+            val intent = Intent(this, NewTaskActivity::class.java)
+            startActivity(intent)
         }
 
     }

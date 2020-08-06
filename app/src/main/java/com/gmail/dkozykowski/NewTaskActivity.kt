@@ -1,35 +1,31 @@
 package com.gmail.dkozykowski
 
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
-import android.view.LayoutInflater
+import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.gmail.dkozykowski.data.model.Task
-import com.gmail.dkozykowski.databinding.DialogNewTaskBinding
+import com.gmail.dkozykowski.databinding.ActivityNewTaskBinding
 import java.util.*
 
-class NewTaskDialog(context: Context) : AlertDialog(context) {
-    private val binding = DialogNewTaskBinding.inflate(LayoutInflater.from(context))
+class NewTaskActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityNewTaskBinding
     private val viewModel: TaskViewModel = TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             //updateCallback()
-            dismiss()
+            finish()
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun show() {
-        setView(binding.root)
-        super.show()
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_new_task)
 
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
-
-        setOnDismissListener {
-            viewModel.sendTaskLiveData.removeObserver(sendMessageObserver)
-        }
 
         binding.addTaskButton.setOnClickListener {
             try {
@@ -44,21 +40,21 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
                     )
                 )
             } catch (e: Exception) {
-                Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.root.setOnClickListener {
-            hideKeyboard(context, binding.root)
+            hideKeyboard(this, binding.root)
             clearFocus()
         }
 
         binding.calendarButton.setOnClickListener {
-            hideKeyboard(context, binding.root)
+            hideKeyboard(this, binding.root)
             clearFocus()
             val calendar = Calendar.getInstance()
             DatePickerDialog(
-                context,
+                this,
                 { _, year, month, dayOfMonth ->
                     binding.dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
                 },
@@ -69,11 +65,11 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
         }
 
         binding.timeButton.setOnClickListener {
-            hideKeyboard(context, binding.root)
+            hideKeyboard(this, binding.root)
             clearFocus()
             val time = Calendar.getInstance()
             TimePickerDialog(
-                context,
+                this,
                 { _, hour, minute ->
                     binding.timeEditText.setText("%02d:%02d".format(hour, minute))
                 },
@@ -84,6 +80,11 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.sendTaskLiveData.removeObserver(sendMessageObserver)
+    }
+
     private fun clearFocus() {
         binding.dateEditText.clearFocus()
         binding.timeEditText.clearFocus()
@@ -91,3 +92,4 @@ class NewTaskDialog(context: Context) : AlertDialog(context) {
         binding.titleEditText.clearFocus()
     }
 }
+
