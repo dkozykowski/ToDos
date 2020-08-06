@@ -27,6 +27,19 @@ class NewTaskActivity : AppCompatActivity() {
 
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 
+        binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) hideKeyboard(
+                this,
+                binding.root
+            )
+        }
+        binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) hideKeyboard(
+                this,
+                binding.root
+            )
+        }
+
         binding.addTaskButton.setOnClickListener {
             try {
                 viewModel.sendTask(

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,7 +67,8 @@
                 android:id="@+id/dateEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Date (dd.mm.yyyy)"
+                android:editable="false"
+                android:hint="Date"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -87,6 +87,7 @@
                 android:id="@+id/timeEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:editable="false"
                 android:hint="Time (hh:mm)"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
