@@ -58,4 +58,9 @@ class ImportantTasksFragment : Fragment() {
         }
         viewModel.loadTasks(IMPORTANT)
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTasks(IMPORTANT)
+    }
 }

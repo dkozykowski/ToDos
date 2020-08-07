@@ -58,4 +58,9 @@ class DoneTasksFragment : Fragment() {
         }
         viewModel.loadTasks(DONE)
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTasks(DONE)
+    }
 }

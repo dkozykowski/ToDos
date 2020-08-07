@@ -15,7 +15,6 @@ class NewTaskActivity : AppCompatActivity() {
     private val viewModel: TaskViewModel = TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
-            //updateCallback()
             finish()
         }
     }
@@ -27,44 +26,47 @@ class NewTaskActivity : AppCompatActivity() {
 
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 
-        binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                this,
-                binding.root
-            )
-        }
-        binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                this,
-                binding.root
-            )
-        }
-
-        binding.addTaskButton.setOnClickListener {
-            try {
-                viewModel.sendTask(
-                    Task(
-                        0,
-                        binding.titleEditText.text.toString(),
-                        binding.descriptionEditText.text.toString(),
-                        stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}"),
-                        important = false,
-                        done = false
-                    )
-                )
-            } catch (e: Exception) {
-                Toast.makeText(this, e.message.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
+        setupDatePicking()
+        setupTimePicking()
+        setupAddTaskButton()
 
         binding.root.setOnClickListener {
             hideKeyboard(this, binding.root)
-            clearFocus()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.sendTaskLiveData.removeObserver(sendMessageObserver)
+    }
+
+    private fun validateNewTaskSheet(): Boolean {
+        var isNewTaskSheetCorrect = true
+
+        if (binding.titleEditText.text.isNullOrBlank()) {
+            binding.titleEditText.error = "Title cannot be blank!"
+            isNewTaskSheetCorrect = false
+        }
+        if (binding.descriptionEditText.text.isNullOrBlank()) {
+            binding.descriptionEditText.error = "Description cannot be blank!"
+            isNewTaskSheetCorrect = false
+        }
+        if (binding.dateEditText.text.isNullOrBlank()) {
+            binding.dateEditText.error = "Select the date!"
+            isNewTaskSheetCorrect = false
+        }
+        if (binding.timeEditText.text.isNullOrBlank()) {
+            binding.timeEditText.error = "Select the time!"
+            isNewTaskSheetCorrect = false
         }
 
+        return isNewTaskSheetCorrect
+    }
+
+    private fun setupDatePicking() {
         binding.calendarButton.setOnClickListener {
             hideKeyboard(this, binding.root)
-            clearFocus()
+            binding.dateEditText.error = null
             val calendar = Calendar.getInstance()
             DatePickerDialog(
                 this,
@@ -77,9 +79,18 @@ class NewTaskActivity : AppCompatActivity() {
             ).show()
         }
 
+        binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) hideKeyboard(
+                this,
+                binding.root
+            )
+        }
+    }
+
+    private fun setupTimePicking() {
         binding.timeButton.setOnClickListener {
             hideKeyboard(this, binding.root)
-            clearFocus()
+            binding.timeEditText.error = null
             val time = Calendar.getInstance()
             TimePickerDialog(
                 this,
@@ -91,18 +102,33 @@ class NewTaskActivity : AppCompatActivity() {
                 true
             ).show()
         }
+
+        binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) hideKeyboard(
+                this,
+                binding.root
+            )
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.sendTaskLiveData.removeObserver(sendMessageObserver)
-    }
-
-    private fun clearFocus() {
-        binding.dateEditText.clearFocus()
-        binding.timeEditText.clearFocus()
-        binding.descriptionEditText.clearFocus()
-        binding.titleEditText.clearFocus()
+    private fun setupAddTaskButton() {
+        binding.addTaskButton.setOnClickListener {
+            try {
+                if (validateNewTaskSheet()) {
+                    viewModel.sendTask(
+                        Task(
+                            0,
+                            binding.titleEditText.text.toString(),
+                            binding.descriptionEditText.text.toString(),
+                            stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}"),
+                            important = false,
+                            done = false
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
-

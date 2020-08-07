@@ -58,4 +58,9 @@ class ActiveTasksFragment : Fragment() {
         }
         viewModel.loadTasks(ALL_ACTIVE)
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTasks(ALL_ACTIVE)
+    }
 }

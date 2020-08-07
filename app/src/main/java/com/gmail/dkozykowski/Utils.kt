@@ -9,8 +9,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 fun stringToDate(dateString: String): Long {
-    return SimpleDateFormat("dd.MM.yyyy HH", Locale.getDefault()).parse(dateString)!!.time
+    return SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).parse(dateString)!!.time
 }
+
 
 fun getDateFromLong(time: Long): String {
     val date = Date(time)
@@ -21,5 +22,10 @@ fun getDateFromLong(time: Long): String {
 fun hideKeyboard(context: Context, view: View) {
     val imm: InputMethodManager =
         context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun minimum(A: Int, B: Int): Int {
+    if (A <= B) return A
+    return B
 }
