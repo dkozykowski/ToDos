@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
 
@@ -31,12 +32,25 @@ class MainActivity : AppCompatActivity() {
             override fun getPageTitle(position: Int): CharSequence? = titles[position]
         }
 
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {}
+
+            override fun onPageSelected(position: Int) {
+                pages[position].onResume()
+            }
+        })
+
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 
         binding.newTaskButton.setOnClickListener {
             val intent = Intent(this, NewTaskActivity::class.java)
             startActivity(intent)
         }
-
     }
 }
