@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski
 
+import android.os.Handler
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -66,28 +67,26 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
 
     private fun removeTaskAnimation(position: Int) {
         data.removeAt(position)
-        try {
+        Handler().post {
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, data.size - 1)
-        } catch (e: Exception) {
-            e.printStackTrace()
+
         }
     }
 
     private fun moveTaskAnimation(oldPosition: Int, newPosition: Int) {
-        //todo remove those try catches, add a live data
-        try {
+        Handler().post {
             notifyItemMoved(oldPosition, newPosition)
             notifyItemRangeChanged(minimum(oldPosition, newPosition), data.size - 1)
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
     fun updateData(data: List<Task>) {
         this.data = data as ArrayList<Task>
         sortData()
-        notifyDataSetChanged()
+        Handler().post {
+            notifyDataSetChanged()
+        }
     }
 
     private fun sortData() {
