@@ -1,12 +1,16 @@
 package com.gmail.dkozykowski
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat.startActivity
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
+
 
 class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     FrameLayout(context, attributeSet) {
@@ -25,7 +29,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         binding.title.text = task.title
         binding.description.text = task.description
-        binding.date.text = getDateFromLong(task.date)
+        binding.date.text = getDateAndTimeFromLong(task.date)
         binding.doneCheckbox.isChecked = task.done
 
         binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->
@@ -40,6 +44,14 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
             updateCallback(task, context)
         }
 
+        binding.root.setOnClickListener {
+            val activity = this.context as Activity
+            val intent = Intent(activity, PreviewTaskActivity::class.java)
+            intent.putExtra("title", task.title)
+            intent.putExtra("description", task.description)
+            intent.putExtra("date", task.date)
+            startActivity(this.context, intent, null)
+        }
         //todo binding delete setonclick
     }
 }

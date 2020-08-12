@@ -13,9 +13,21 @@ fun stringToDate(dateString: String): Long {
 }
 
 
-fun getDateFromLong(time: Long): String {
+fun getDateAndTimeFromLong(time: Long): String {
     val date = Date(time)
     val format = SimpleDateFormat("dd.MM.yyyy HH:mm")
+    return format.format(date)
+}
+
+fun getDateFromLong(time: Long): String {
+    val date = Date(time)
+    val format = SimpleDateFormat("dd.MM.yyyy")
+    return format.format(date)
+}
+
+fun getTimeFromLong(time: Long): String {
+    val date = Date(time)
+    val format = SimpleDateFormat("HH:mm")
     return format.format(date)
 }
 
