@@ -1,12 +1,15 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.adapter
 
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
+import com.gmail.dkozykowski.utils.minimum
+import com.gmail.dkozykowski.ui.view.ItemListView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,7 +21,9 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
     private var data: ArrayList<Task> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemListView(parent.context))
+        return ViewHolder(
+            ItemListView(parent.context)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -77,7 +82,11 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
     private fun moveTaskAnimation(oldPosition: Int, newPosition: Int) {
         Handler().post {
             notifyItemMoved(oldPosition, newPosition)
-            notifyItemRangeChanged(minimum(oldPosition, newPosition), data.size - 1)
+            notifyItemRangeChanged(
+                minimum(
+                    oldPosition,
+                    newPosition
+                ), data.size - 1)
         }
     }
 

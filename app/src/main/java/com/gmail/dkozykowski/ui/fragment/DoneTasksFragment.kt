@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +10,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gmail.dkozykowski.QueryTaskType.IMPORTANT
-import com.gmail.dkozykowski.databinding.FragmentImportantTasksBinding
+import com.gmail.dkozykowski.QueryTaskType.DONE
+import com.gmail.dkozykowski.ui.adapter.TaskAdapter
+import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import com.gmail.dkozykowski.databinding.FragmentDoneTasksBinding
 
-class ImportantTasksFragment : Fragment() {
-    lateinit var binding: FragmentImportantTasksBinding
-    private val adapter by lazy { TaskAdapter(IMPORTANT) }
+class DoneTasksFragment : Fragment() {
+    lateinit var binding: FragmentDoneTasksBinding
+    private val adapter by lazy {
+        TaskAdapter(
+            DONE
+        )
+    }
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -23,7 +29,7 @@ class ImportantTasksFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentImportantTasksBinding.inflate(inflater, container, false)
+        binding = FragmentDoneTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()
@@ -41,7 +47,7 @@ class ImportantTasksFragment : Fragment() {
             binding.swipeRefresh.isRefreshing = viewState is TaskViewModel.LoadViewState.Loading
         })
 
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(IMPORTANT) }
+        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(DONE) }
 
         return binding.root
     }
@@ -54,13 +60,13 @@ class ImportantTasksFragment : Fragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
-            adapter = this@ImportantTasksFragment.adapter
+            adapter = this@DoneTasksFragment.adapter
         }
-        viewModel.loadTasks(IMPORTANT)
+        viewModel.loadTasks(DONE)
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(IMPORTANT)
+        viewModel.loadTasks(DONE)
     }
 }

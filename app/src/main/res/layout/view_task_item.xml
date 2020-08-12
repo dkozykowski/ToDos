@@ -54,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/description" />
 
-        <com.gmail.dkozykowski.StarCheckboxView
+        <com.gmail.dkozykowski.ui.view.StarCheckboxView
             android:id="@+id/importantTaskCheckbox"
             android:layout_width="32dp"
             android:layout_height="32dp"

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,11 +19,11 @@
         </activity>
 
         <activity
-            android:name=".NewTaskActivity"
+            android:name=".ui.activity.NewTaskActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".PreviewTaskActivity"
+            android:name=".ui.activity.PreviewTaskActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -6,13 +6,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.gmail.dkozykowski.R
+import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ActivityNewTaskBinding
+import com.gmail.dkozykowski.utils.hideKeyboard
+import com.gmail.dkozykowski.utils.stringToDate
 import java.util.*
 
 class NewTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewTaskBinding
-    private val viewModel: TaskViewModel = TaskViewModel()
+    private val viewModel: TaskViewModel =
+        TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             finish()
@@ -22,7 +27,9 @@ class NewTaskActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_new_task)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_new_task
+        )
 
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 

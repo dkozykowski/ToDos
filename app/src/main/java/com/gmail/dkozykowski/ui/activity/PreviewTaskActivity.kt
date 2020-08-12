@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -7,7 +7,9 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.gmail.dkozykowski.*
 import com.gmail.dkozykowski.databinding.ActivityPreviewTaskBinding
+import com.gmail.dkozykowski.utils.*
 import java.util.*
 
 class PreviewTaskActivity : AppCompatActivity() {
@@ -22,7 +24,9 @@ class PreviewTaskActivity : AppCompatActivity() {
 
         loadTask()
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_preview_task)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_preview_task
+        )
 
         updateMode()
         setupDatePicking()
@@ -44,7 +48,12 @@ class PreviewTaskActivity : AppCompatActivity() {
         binding.saveButton.setOnClickListener {
             // TODO: 12.08.2020
         }
-        binding.root.setOnClickListener { hideKeyboard(this, binding.root) }
+        binding.root.setOnClickListener {
+            hideKeyboard(
+                this,
+                binding.root
+            )
+        }
     }
 
     override fun onBackPressed() {
@@ -73,12 +82,21 @@ class PreviewTaskActivity : AppCompatActivity() {
             if (isEditMode) {
                 titleEditText.setText(title)
                 descriptionEditText.setText(description)
-                dateEditText.setText(getDateFromLong(date))
-                timeEditText.setText(getTimeFromLong(date))
+                dateEditText.setText(
+                    getDateFromLong(
+                        date
+                    )
+                )
+                timeEditText.setText(
+                    getTimeFromLong(
+                        date
+                    )
+                )
             } else {
                 titleText.text = title
                 descriptionText.text = description
-                dateAndTimeText.text = getDateAndTimeFromLong(date)
+                dateAndTimeText.text =
+                    getDateAndTimeFromLong(date)
             }
         }
     }

@@ -1,9 +1,9 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import kotlinx.coroutines.Dispatchers
@@ -27,10 +27,18 @@ class TaskViewModel : ViewModel() {
                         QueryTaskType.ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
                         QueryTaskType.DONE ->  DB.db.taskDao().getDoneTasks()
                     }
-                    loadTaskLiveData.postValue(LoadViewState.Success(tasks))
+                    loadTaskLiveData.postValue(
+                        LoadViewState.Success(
+                            tasks
+                        )
+                    )
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    loadTaskLiveData.postValue(LoadViewState.Error(e.message.toString()))
+                    loadTaskLiveData.postValue(
+                        LoadViewState.Error(
+                            e.message.toString()
+                        )
+                    )
                 }
             }
         }
@@ -48,7 +56,11 @@ class TaskViewModel : ViewModel() {
                     sendTaskLiveData.postValue(SendViewState.Success)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    sendTaskLiveData.postValue(SendViewState.Error(e.message.toString()))
+                    sendTaskLiveData.postValue(
+                        SendViewState.Error(
+                            e.message.toString()
+                        )
+                    )
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.view
 
 import android.app.Activity
 import android.content.Context
@@ -10,6 +10,8 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat.startActivity
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
+import com.gmail.dkozykowski.utils.getDateAndTimeFromLong
+import com.gmail.dkozykowski.ui.activity.PreviewTaskActivity
 
 
 class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
@@ -29,7 +31,8 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         binding.title.text = task.title
         binding.description.text = task.description
-        binding.date.text = getDateAndTimeFromLong(task.date)
+        binding.date.text =
+            getDateAndTimeFromLong(task.date)
         binding.doneCheckbox.isChecked = task.done
 
         binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->

@@ -1,4 +1,4 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.utils
 
 import android.app.Activity
 import android.content.Context

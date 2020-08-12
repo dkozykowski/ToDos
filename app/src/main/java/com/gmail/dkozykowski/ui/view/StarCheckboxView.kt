@@ -1,11 +1,11 @@
-package com.gmail.dkozykowski
+package com.gmail.dkozykowski.ui.view
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.FrameLayout
+import com.gmail.dkozykowski.R
 import kotlinx.android.synthetic.main.view_star_checkbox.view.*
 import kotlin.math.sqrt
 
