@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.gmail.dkozykowski.*
+import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.ActivityPreviewTaskBinding
 import com.gmail.dkozykowski.utils.*
 import java.util.*
@@ -16,6 +16,8 @@ class PreviewTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPreviewTaskBinding
     private lateinit var title: String
     private lateinit var description: String
+    //private val viewModel: TaskViewModel = TaskViewModel()
+    private var id = 0
     private var date = 0L
     private var isEditMode = false
 
@@ -24,7 +26,8 @@ class PreviewTaskActivity : AppCompatActivity() {
 
         loadTask()
 
-        binding = DataBindingUtil.setContentView(this,
+        binding = DataBindingUtil.setContentView(
+            this,
             R.layout.activity_preview_task
         )
 
@@ -46,7 +49,17 @@ class PreviewTaskActivity : AppCompatActivity() {
             }
         }
         binding.saveButton.setOnClickListener {
-            // TODO: 12.08.2020
+            title = binding.titleEditText.text.toString()
+            description = binding.descriptionEditText.text.toString()
+            date = stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}")
+
+            if (validateEditTaskSheet()) {
+                isEditMode = false
+                updateMode()
+
+
+                //tutaj wysylanie do bazy danych
+            }
         }
         binding.root.setOnClickListener {
             hideKeyboard(
@@ -71,6 +84,7 @@ class PreviewTaskActivity : AppCompatActivity() {
         title = intent.getStringExtra("title")!!
         description = intent.getStringExtra("description")!!
         date = intent.getLongExtra("date", 0)
+        id = intent.getIntExtra("id", 0)
     }
 
     private fun updateMode() {
@@ -82,21 +96,12 @@ class PreviewTaskActivity : AppCompatActivity() {
             if (isEditMode) {
                 titleEditText.setText(title)
                 descriptionEditText.setText(description)
-                dateEditText.setText(
-                    getDateFromLong(
-                        date
-                    )
-                )
-                timeEditText.setText(
-                    getTimeFromLong(
-                        date
-                    )
-                )
+                dateEditText.setText(getDateFromLong(date))
+                timeEditText.setText(getTimeFromLong(date))
             } else {
                 titleText.text = title
                 descriptionText.text = description
-                dateAndTimeText.text =
-                    getDateAndTimeFromLong(date)
+                dateAndTimeText.text = getDateAndTimeFromLong(date)
             }
         }
     }
@@ -133,8 +138,8 @@ class PreviewTaskActivity : AppCompatActivity() {
     }
 
     private fun areChangesUnsaved(): Boolean {
-        if (binding.titleEditText.toString() != title ||
-            binding.descriptionEditText.toString() != description ||
+        if (binding.titleEditText.text.toString() != title ||
+            binding.descriptionEditText.text.toString() != description ||
             stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}") != date
         ) return true
         return false

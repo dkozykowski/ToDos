@@ -16,8 +16,7 @@ import java.util.*
 
 class NewTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewTaskBinding
-    private val viewModel: TaskViewModel =
-        TaskViewModel()
+    private val viewModel: TaskViewModel = TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             finish()

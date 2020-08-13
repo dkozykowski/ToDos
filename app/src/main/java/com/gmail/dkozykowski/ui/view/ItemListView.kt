@@ -53,6 +53,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
             intent.putExtra("title", task.title)
             intent.putExtra("description", task.description)
             intent.putExtra("date", task.date)
+            intent.putExtra("id", task.uid)
             startActivity(this.context, intent, null)
         }
         //todo binding delete setonclick
