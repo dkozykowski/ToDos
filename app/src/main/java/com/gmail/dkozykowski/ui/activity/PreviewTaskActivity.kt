@@ -10,21 +10,30 @@ import androidx.databinding.DataBindingUtil
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.ActivityPreviewTaskBinding
 import com.gmail.dkozykowski.utils.*
+import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import java.util.*
 
 class PreviewTaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPreviewTaskBinding
     private lateinit var title: String
     private lateinit var description: String
-    //private val viewModel: TaskViewModel = TaskViewModel()
+    private val viewModel: TaskViewModel = TaskViewModel()
     private var id = 0
     private var date = 0L
     private var isEditMode = false
+
+    private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
+        if (it is TaskViewModel.UpdateViewState.Success) {
+            binding.saveButton.isClickable = true
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         loadTask()
+
+        viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
 
         binding = DataBindingUtil.setContentView(
             this,
@@ -34,6 +43,7 @@ class PreviewTaskActivity : AppCompatActivity() {
         updateMode()
         setupDatePicking()
         setupTimePicking()
+        setupSaveButton()
 
         binding.closePreviewButton.setOnClickListener { finish() }
         binding.editButton.setOnClickListener {
@@ -48,25 +58,17 @@ class PreviewTaskActivity : AppCompatActivity() {
                 updateMode()
             }
         }
-        binding.saveButton.setOnClickListener {
-            title = binding.titleEditText.text.toString()
-            description = binding.descriptionEditText.text.toString()
-            date = stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}")
-
-            if (validateEditTaskSheet()) {
-                isEditMode = false
-                updateMode()
-
-
-                //tutaj wysylanie do bazy danych
-            }
-        }
         binding.root.setOnClickListener {
             hideKeyboard(
                 this,
                 binding.root
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.updateTaskLiveData.removeObserver(updateTaskObserver)
     }
 
     override fun onBackPressed() {
@@ -78,6 +80,22 @@ class PreviewTaskActivity : AppCompatActivity() {
                 updateMode()
             }
         } else finish()
+    }
+
+    private fun setupSaveButton() {
+        binding.saveButton.setOnClickListener {
+            title = binding.titleEditText.text.toString()
+            description = binding.descriptionEditText.text.toString()
+            date = stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}")
+
+            if (validateEditTaskSheet()) {
+                binding.saveButton.isClickable = false
+                isEditMode = false
+                updateMode()
+
+                viewModel.updateTask(id, title, description, date)
+            }
+        }
     }
 
     private fun loadTask() {

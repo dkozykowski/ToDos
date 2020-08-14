@@ -41,6 +41,7 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
                     }
                 }
             }
+            data.removeAt(position)
             removeTaskAnimation(position)
         }, updateCallback = { task, context ->
             val index = data.indexOfFirst { it.uid == task.uid }
@@ -59,34 +60,29 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
                 sortData()
                 moveTaskAnimation(index, data.indexOfFirst { it.uid == task.uid })
             } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
-                removeTaskAnimation(data.indexOfFirst { it.uid == task.uid })
+                val position = data.indexOfFirst { it.uid == task.uid }
+                data.removeAt(position)
+                removeTaskAnimation(position)
                 Toast.makeText(
                     context, if (task.done) "Task moved to done"
                     else "Task moved to active", Toast.LENGTH_SHORT
                 ).show()
             } else if (queryType == IMPORTANT && !task.important) {
+                data.removeAt(index)
                 removeTaskAnimation(index)
             }
         })
     }
 
     private fun removeTaskAnimation(position: Int) {
-        data.removeAt(position)
         Handler().post {
             notifyItemRemoved(position)
-            notifyItemRangeChanged(position, data.size - 1)
-
         }
     }
 
     private fun moveTaskAnimation(oldPosition: Int, newPosition: Int) {
         Handler().post {
             notifyItemMoved(oldPosition, newPosition)
-            notifyItemRangeChanged(
-                minimum(
-                    oldPosition,
-                    newPosition
-                ), data.size - 1)
         }
     }
 

@@ -31,8 +31,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         binding.title.text = task.title
         binding.description.text = task.description
-        binding.date.text =
-            getDateAndTimeFromLong(task.date)
+        binding.date.text = getDateAndTimeFromLong(task.date)
         binding.doneCheckbox.isChecked = task.done
 
         binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->

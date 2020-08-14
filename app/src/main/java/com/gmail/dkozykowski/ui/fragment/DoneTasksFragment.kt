@@ -17,11 +17,7 @@ import com.gmail.dkozykowski.databinding.FragmentDoneTasksBinding
 
 class DoneTasksFragment : Fragment() {
     lateinit var binding: FragmentDoneTasksBinding
-    private val adapter by lazy {
-        TaskAdapter(
-            DONE
-        )
-    }
+    private val adapter by lazy { TaskAdapter( DONE )}
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -44,10 +40,7 @@ class DoneTasksFragment : Fragment() {
                 ).show()
                 is TaskViewModel.LoadViewState.Success -> adapter.updateData(viewState.data)
             }
-            binding.swipeRefresh.isRefreshing = viewState is TaskViewModel.LoadViewState.Loading
         })
-
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(DONE) }
 
         return binding.root
     }
@@ -62,11 +55,11 @@ class DoneTasksFragment : Fragment() {
             addItemDecoration(dividerItemDecoration)
             adapter = this@DoneTasksFragment.adapter
         }
-        viewModel.loadTasks(DONE)
+        viewModel.loadTasks( DONE )
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(DONE)
+        viewModel.loadTasks( DONE )
     }
 }

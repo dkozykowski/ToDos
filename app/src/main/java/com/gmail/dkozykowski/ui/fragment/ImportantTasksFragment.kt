@@ -11,17 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gmail.dkozykowski.QueryTaskType.IMPORTANT
+import com.gmail.dkozykowski.databinding.FragmentImportantTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
-import com.gmail.dkozykowski.databinding.FragmentImportantTasksBinding
 
 class ImportantTasksFragment : Fragment() {
     lateinit var binding: FragmentImportantTasksBinding
-    private val adapter by lazy {
-        TaskAdapter(
-            IMPORTANT
-        )
-    }
+    private val adapter by lazy { TaskAdapter(IMPORTANT) }
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -44,10 +40,7 @@ class ImportantTasksFragment : Fragment() {
                 ).show()
                 is TaskViewModel.LoadViewState.Success -> adapter.updateData(viewState.data)
             }
-            binding.swipeRefresh.isRefreshing = viewState is TaskViewModel.LoadViewState.Loading
         })
-
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(IMPORTANT) }
 
         return binding.root
     }

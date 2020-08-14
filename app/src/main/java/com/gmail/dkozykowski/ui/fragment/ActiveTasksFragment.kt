@@ -17,11 +17,7 @@ import com.gmail.dkozykowski.databinding.FragmentActiveTasksBinding
 
 class ActiveTasksFragment : Fragment() {
     lateinit var binding: FragmentActiveTasksBinding
-    private val adapter by lazy {
-        TaskAdapter(
-            ALL_ACTIVE
-        )
-    }
+    private val adapter by lazy { TaskAdapter( ALL_ACTIVE )}
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -44,10 +40,7 @@ class ActiveTasksFragment : Fragment() {
                 ).show()
                 is TaskViewModel.LoadViewState.Success -> adapter.updateData(viewState.data)
             }
-            binding.swipeRefresh.isRefreshing = viewState is TaskViewModel.LoadViewState.Loading
         })
-
-        binding.swipeRefresh.setOnRefreshListener { viewModel.loadTasks(ALL_ACTIVE) }
 
         return binding.root
     }
@@ -56,17 +49,17 @@ class ActiveTasksFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerView.run {
-            setHasFixedSize(false)
+            setHasFixedSize( false )
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
             adapter = this@ActiveTasksFragment.adapter
         }
-        viewModel.loadTasks(ALL_ACTIVE)
+        viewModel.loadTasks( ALL_ACTIVE )
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(ALL_ACTIVE)
+        viewModel.loadTasks( ALL_ACTIVE )
     }
 }

@@ -13,8 +13,9 @@ import kotlinx.coroutines.withContext
 class TaskViewModel : ViewModel() {
     val loadTaskLiveData = MutableLiveData<LoadViewState>()
     val sendTaskLiveData = MutableLiveData<SendViewState>()
+    val updateTaskLiveData = MutableLiveData<UpdateViewState>()
 
-    fun loadTasks(querryType: QueryTaskType) {
+    fun loadTasks(queryType: QueryTaskType) {
         if (loadTaskLiveData.value == LoadViewState.Loading) return
 
         loadTaskLiveData.postValue(LoadViewState.Loading)
@@ -22,7 +23,7 @@ class TaskViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val tasks = when(querryType) {
+                    val tasks = when(queryType) {
                         QueryTaskType.IMPORTANT -> DB.db.taskDao().getImportantActiveTasks()
                         QueryTaskType.ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
                         QueryTaskType.DONE ->  DB.db.taskDao().getDoneTasks()
@@ -66,6 +67,33 @@ class TaskViewModel : ViewModel() {
         }
     }
 
+    fun updateTask(id: Int, title: String, description: String, date: Long) {
+        if (updateTaskLiveData.value is UpdateViewState.Loading) return
+
+        updateTaskLiveData.postValue(UpdateViewState.Loading)
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val taskDao = DB.db.taskDao()
+                    var task = taskDao.getTaskById(id)
+
+                    if (task.title != title || task.description != description || task.date != date) {
+                        task.title = title
+                        task.description = description
+                        task.date = date
+                        taskDao.updateTask(task)
+                    }
+
+                    sendTaskLiveData.postValue(SendViewState.Success)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    sendTaskLiveData.postValue( SendViewState.Error( e.message.toString() ))
+                }
+            }
+        }
+    }
+
     sealed class LoadViewState {
         object Loading : LoadViewState()
         class Error(val errorMessage: String) : LoadViewState()
@@ -76,5 +104,11 @@ class TaskViewModel : ViewModel() {
         object Loading : SendViewState()
         class Error(val errorMessage: String) : SendViewState()
         object Success : SendViewState()
+    }
+
+    sealed class UpdateViewState {
+        object Loading : UpdateViewState()
+        class Error(val errorMessage: String) : UpdateViewState()
+        object Success : UpdateViewState()
     }
 }
