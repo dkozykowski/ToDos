@@ -17,14 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.activity.NewTaskActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.activity.PreviewTaskActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -1,34 +1,39 @@
-package com.gmail.dkozykowski.ui.activity
+package com.gmail.dkozykowski.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.R
-import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import com.gmail.dkozykowski.data.model.Task
-import com.gmail.dkozykowski.databinding.ActivityNewTaskBinding
+import com.gmail.dkozykowski.databinding.FragmentNewTaskBinding
 import com.gmail.dkozykowski.utils.hideKeyboard
 import com.gmail.dkozykowski.utils.stringToDate
+import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import java.util.*
 
-class NewTaskActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityNewTaskBinding
+class NewTaskFragment : Fragment() {
+    private lateinit var binding: FragmentNewTaskBinding
     private val viewModel: TaskViewModel = TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
-            finish()
+            findNavController().navigateUp()
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        binding = DataBindingUtil.setContentView(this,
-            R.layout.activity_new_task
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
 
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 
@@ -37,8 +42,10 @@ class NewTaskActivity : AppCompatActivity() {
         setupAddTaskButton()
 
         binding.root.setOnClickListener {
-            hideKeyboard(this, binding.root)
+            hideKeyboard(context!!, binding.root)
         }
+
+        return binding.root
     }
 
     override fun onDestroy() {
@@ -71,11 +78,11 @@ class NewTaskActivity : AppCompatActivity() {
 
     private fun setupDatePicking() {
         binding.calendarButton.setOnClickListener {
-            hideKeyboard(this, binding.root)
+            hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
             val calendar = Calendar.getInstance()
             DatePickerDialog(
-                this,
+                context!!,
                 { _, year, month, dayOfMonth ->
                     binding.dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
                 },
@@ -87,7 +94,7 @@ class NewTaskActivity : AppCompatActivity() {
 
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) hideKeyboard(
-                this,
+                context!!,
                 binding.root
             )
         }
@@ -95,11 +102,11 @@ class NewTaskActivity : AppCompatActivity() {
 
     private fun setupTimePicking() {
         binding.timeButton.setOnClickListener {
-            hideKeyboard(this, binding.root)
+            hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
             val time = Calendar.getInstance()
             TimePickerDialog(
-                this,
+                context!!,
                 { _, hour, minute ->
                     binding.timeEditText.setText("%02d:%02d".format(hour, minute))
                 },
@@ -111,7 +118,7 @@ class NewTaskActivity : AppCompatActivity() {
 
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) hideKeyboard(
-                this,
+                context!!,
                 binding.root
             )
         }
@@ -133,7 +140,7 @@ class NewTaskActivity : AppCompatActivity() {
                     )
                 }
             } catch (e: Exception) {
-                Toast.makeText(this, e.message.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context!!, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,17 +1,16 @@
 package com.gmail.dkozykowski.ui.view
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
+import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
 import com.gmail.dkozykowski.utils.getDateAndTimeFromLong
-import com.gmail.dkozykowski.ui.activity.PreviewTaskActivity
 
 
 class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
@@ -47,13 +46,13 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         binding.root.setOnClickListener {
-            val activity = this.context as Activity
-            val intent = Intent(activity, PreviewTaskActivity::class.java)
-            intent.putExtra("title", task.title)
-            intent.putExtra("description", task.description)
-            intent.putExtra("date", task.date)
-            intent.putExtra("id", task.uid)
-            startActivity(this.context, intent, null)
+            val bundle = bundleOf(
+                "title" to task.title,
+                "description" to task.description,
+                "date" to task.date,
+                "id" to task.uid
+            )
+            findNavController().navigate(R.id.PreviewTaskFragment, bundle)
         }
         //todo binding delete setonclick
     }

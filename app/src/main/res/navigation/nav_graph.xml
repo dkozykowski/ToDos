@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/activeTasksFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/viewPagerFragment">
 
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        android:name="com.gmail.dkozykowski.ui.fragment.ViewPagerFragment"
+        android:label="ViewPagerFragment"
+        tools:layout="@layout/fragment_view_pager">
+        <action
+            android:id="@+id/action_viewPagerFragment_to_NewTaskFragment"
+            app:destination="@id/NewTaskFragment" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_PreviewTaskFragment"
+            app:destination="@id/PreviewTaskFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NewTaskFragment"
+        android:name="com.gmail.dkozykowski.ui.fragment.NewTaskFragment"
+        android:label="NewTaskFragment"
+        tools:layout="@layout/fragment_new_task"/>
+    <fragment
+        android:id="@+id/PreviewTaskFragment"
+        android:name="com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment"
+        android:label="PreviewTaskFragment"
+        tools:layout="@layout/fragment_preview_task"/>
     <fragment
         android:id="@+id/activeTasksFragment"
         android:name="com.gmail.dkozykowski.ui.fragment.ImportantTasksFragment"
-        android:label="ActiveTasksFragment" />
+        android:label="ActiveTasksFragment"
+        tools:layout="@layout/fragment_active_tasks"/>
     <fragment
         android:id="@+id/importantTasksFragment"
         android:name="com.gmail.dkozykowski.ui.fragment.ImportantTasksFragment"
-        android:label="ImportantTasksFragment" />
+        android:label="ImportantTasksFragment"
+        tools:layout="@layout/fragment_important_tasks"/>
     <fragment
         android:id="@+id/doneTasksFragment"
         android:name="com.gmail.dkozykowski.ui.fragment.DoneTasksFragment"
-        android:label="DoneTasksFragment" />
+        android:label="DoneTasksFragment"
+        tools:layout="@layout/fragment_done_tasks"/>
+
 </navigation>

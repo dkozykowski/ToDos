@@ -1,24 +1,27 @@
-package com.gmail.dkozykowski.ui.activity
+package com.gmail.dkozykowski.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.R
-import com.gmail.dkozykowski.databinding.ActivityPreviewTaskBinding
+import com.gmail.dkozykowski.databinding.FragmentPreviewTaskBinding
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import java.util.*
 
-class PreviewTaskActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPreviewTaskBinding
+class PreviewTaskFragment : Fragment() {
+    private lateinit var binding: FragmentPreviewTaskBinding
     private lateinit var title: String
     private lateinit var description: String
-    private val viewModel: TaskViewModel = TaskViewModel()
-    private var id = 0
+    private val viewModel = TaskViewModel()
+    private var uid = 0
     private var date = 0L
     private var isEditMode = false
 
@@ -28,28 +31,31 @@ class PreviewTaskActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
+        isEditMode = false
         loadTask()
-
         viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
 
-        binding = DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_preview_task
-        )
-
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_preview_task, container, false)
         updateMode()
         setupDatePicking()
         setupTimePicking()
         setupSaveButton()
 
-        binding.closePreviewButton.setOnClickListener { finish() }
+        binding.closePreviewButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         binding.editButton.setOnClickListener {
             isEditMode = true
             updateMode()
         }
+
         binding.cancelButton.setOnClickListener {
             if (areChangesUnsaved()) {
                 showExitDialog()
@@ -58,12 +64,15 @@ class PreviewTaskActivity : AppCompatActivity() {
                 updateMode()
             }
         }
+
         binding.root.setOnClickListener {
             hideKeyboard(
-                this,
+                context!!,
                 binding.root
             )
         }
+
+        return binding.root
     }
 
     override fun onDestroy() {
@@ -71,7 +80,7 @@ class PreviewTaskActivity : AppCompatActivity() {
         viewModel.updateTaskLiveData.removeObserver(updateTaskObserver)
     }
 
-    override fun onBackPressed() {
+    fun onBackPressed() {
         if (isEditMode) {
             if (areChangesUnsaved()) {
                 showExitDialog()
@@ -79,7 +88,7 @@ class PreviewTaskActivity : AppCompatActivity() {
                 isEditMode = false
                 updateMode()
             }
-        } else finish()
+        } else findNavController().navigateUp()
     }
 
     private fun setupSaveButton() {
@@ -93,16 +102,16 @@ class PreviewTaskActivity : AppCompatActivity() {
                 isEditMode = false
                 updateMode()
 
-                viewModel.updateTask(id, title, description, date)
+                viewModel.updateTask(uid, title, description, date)
             }
         }
     }
 
     private fun loadTask() {
-        title = intent.getStringExtra("title")!!
-        description = intent.getStringExtra("description")!!
-        date = intent.getLongExtra("date", 0)
-        id = intent.getIntExtra("id", 0)
+        title = arguments?.getString("title")!!
+        description = arguments?.getString("description")!!
+        date = arguments?.getLong("date")!!
+        uid = arguments?.getInt("id")!!
     }
 
     private fun updateMode() {
@@ -164,7 +173,7 @@ class PreviewTaskActivity : AppCompatActivity() {
     }
 
     private fun showExitDialog() {
-        AlertDialog.Builder(this).apply {
+        AlertDialog.Builder(context!!).apply {
             setMessage("Discard changes?")
             setPositiveButton("Yes") { _, _ ->
                 isEditMode = false
@@ -176,11 +185,11 @@ class PreviewTaskActivity : AppCompatActivity() {
 
     private fun setupDatePicking() {
         binding.calendarButton.setOnClickListener {
-            hideKeyboard(this, binding.root)
+            hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
             val calendar = Calendar.getInstance()
             DatePickerDialog(
-                this,
+                context!!,
                 { _, year, month, dayOfMonth ->
                     binding.dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
                 },
@@ -192,7 +201,7 @@ class PreviewTaskActivity : AppCompatActivity() {
 
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) hideKeyboard(
-                this,
+                context!!,
                 binding.root
             )
         }
@@ -200,11 +209,11 @@ class PreviewTaskActivity : AppCompatActivity() {
 
     private fun setupTimePicking() {
         binding.timeButton.setOnClickListener {
-            hideKeyboard(this, binding.root)
+            hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
             val time = Calendar.getInstance()
             TimePickerDialog(
-                this,
+                context!!,
                 { _, hour, minute ->
                     binding.timeEditText.setText("%02d:%02d".format(hour, minute))
                 },
@@ -216,7 +225,7 @@ class PreviewTaskActivity : AppCompatActivity() {
 
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) hideKeyboard(
-                this,
+                context!!,
                 binding.root
             )
         }
