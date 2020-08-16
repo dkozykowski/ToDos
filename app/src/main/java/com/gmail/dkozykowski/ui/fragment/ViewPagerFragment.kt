@@ -1,6 +1,6 @@
 package com.gmail.dkozykowski.ui.fragment
 
-import android.content.Intent
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +12,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentViewPagerBinding
+import kotlin.system.exitProcess
 
 class ViewPagerFragment : Fragment() {
     private lateinit var binding: FragmentViewPagerBinding
     private val pages = arrayOf(
-            ActiveTasksFragment(),
-            ImportantTasksFragment(),
-            DoneTasksFragment()
-        )
+        ActiveTasksFragment(),
+        ImportantTasksFragment(),
+        DoneTasksFragment()
+    )
     private val titles = arrayOf("Active", "Important", "Done")
 
     override fun onCreateView(
@@ -58,5 +59,16 @@ class ViewPagerFragment : Fragment() {
             findNavController().navigate(R.id.action_viewPagerFragment_to_NewTaskFragment)
         }
         return binding.root
+    }
+
+    fun onBackPressed() {
+        AlertDialog.Builder(context!!).apply {
+            setMessage("Close application?")
+            setPositiveButton("Yes") { _, _ ->
+                activity!!.finish()
+                exitProcess(0)
+            }
+            setNegativeButton("No", null)
+        }.show()
     }
 }

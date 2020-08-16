@@ -5,10 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
+import com.gmail.dkozykowski.ui.fragment.NewTaskFragment
+import com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment
+import com.gmail.dkozykowski.ui.fragment.ViewPagerFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,4 +26,28 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
     }
+
+    override fun onBackPressed() {
+        val nav = findNavController(R.id.nav_host_fragment)
+        val currentDest = nav.currentDestination
+        val navHostFragment: NavHostFragment? =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        when (currentDest?.id) {
+            R.id.viewPagerFragment -> {
+                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as ViewPagerFragment
+                fragment.onBackPressed()
+            }
+            R.id.PreviewTaskFragment -> {
+                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as PreviewTaskFragment
+                fragment.onBackPressed()
+            }
+            R.id.NewTaskFragment -> {
+                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as NewTaskFragment
+                fragment.onBackPressed()
+            }
+        }
+    }
 }
+
+

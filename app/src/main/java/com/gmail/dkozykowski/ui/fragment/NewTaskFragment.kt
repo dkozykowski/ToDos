@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -143,5 +144,23 @@ class NewTaskFragment : Fragment() {
                 Toast.makeText(context!!, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun onBackPressed() {
+        with(binding) {
+            if (titleEditText.text.isNullOrBlank() && descriptionEditText.text.isNullOrBlank() &&
+                dateEditText.text.isNullOrBlank() && timeEditText.text.isNullOrBlank()
+            ) findNavController().navigateUp() else showExitDialog()
+        }
+    }
+
+    private fun showExitDialog() {
+        AlertDialog.Builder(context!!).apply {
+            setMessage("Discard changes?")
+            setPositiveButton("Yes") { _, _ ->
+                findNavController().navigateUp()
+            }
+            setNegativeButton("No", null)
+        }.show()
     }
 }
