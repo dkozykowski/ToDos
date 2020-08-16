@@ -56,7 +56,7 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
                 }
             }
 
-            if (queryType == ALL_ACTIVE && !task.done) {
+            if ((queryType == ALL_ACTIVE && !task.done) || (queryType == DONE && task.done)) {
                 sortData()
                 moveTaskAnimation(index, data.indexOfFirst { it.uid == task.uid })
             } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
