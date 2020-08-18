@@ -3,6 +3,8 @@ package com.gmail.dkozykowski.ui.fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -38,7 +40,10 @@ class ImportantTasksFragment : Fragment() {
                     viewState.errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
-                is TaskViewModel.LoadViewState.Success -> adapter.updateData(viewState.data)
+                is TaskViewModel.LoadViewState.Success -> {
+                    adapter.updateData(viewState.data)
+                    binding.emptyListText.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
+                }
             }
         })
 
@@ -48,6 +53,7 @@ class ImportantTasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.emptyListText.visibility = GONE
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

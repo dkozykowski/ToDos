@@ -20,6 +20,10 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
 
     private var data: ArrayList<Task> = ArrayList()
 
+    fun isDataEmpty(): Boolean {
+        return (itemCount == 0)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             ItemListView(parent.context)

@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
+import com.ToxicBakery.viewpager.transforms.AccordionTransformer
+import com.ToxicBakery.viewpager.transforms.ScaleInOutTransformer
+import com.ToxicBakery.viewpager.transforms.ZoomInTransformer
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentViewPagerBinding
 import kotlin.system.exitProcess
@@ -37,6 +40,8 @@ class ViewPagerFragment : Fragment() {
 
             override fun getPageTitle(position: Int): CharSequence? = titles[position]
         }
+
+        binding.viewPager.setPageTransformer(true, ScaleInOutTransformer())
 
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
