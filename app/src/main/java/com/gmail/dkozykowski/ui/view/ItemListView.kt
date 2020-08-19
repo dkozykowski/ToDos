@@ -52,7 +52,10 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
                 "date" to task.date,
                 "id" to task.uid
             )
-            findNavController().navigate(R.id.PreviewTaskFragment, bundle)
+            findNavController().navigate(
+                R.id.action_viewPagerFragment_to_PreviewTaskFragment,
+                bundle
+            )
         }
         //todo binding delete setonclick
     }

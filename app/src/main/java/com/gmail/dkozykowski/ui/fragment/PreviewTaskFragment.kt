@@ -48,7 +48,7 @@ class PreviewTaskFragment : Fragment() {
         setupSaveButton()
 
         binding.closePreviewButton.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_PreviewTaskFragment_to_viewPagerFragment)
         }
 
         binding.editButton.setOnClickListener {
@@ -88,7 +88,7 @@ class PreviewTaskFragment : Fragment() {
                 isEditMode = false
                 updateMode()
             }
-        } else findNavController().navigateUp()
+        } else findNavController().navigate(R.id.action_PreviewTaskFragment_to_viewPagerFragment)
     }
 
     private fun setupSaveButton() {

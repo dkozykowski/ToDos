@@ -24,7 +24,7 @@ class NewTaskFragment : Fragment() {
     private val viewModel: TaskViewModel = TaskViewModel()
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.action_NewTaskFragment_to_viewPagerFragment)
         }
     }
 
@@ -150,7 +150,8 @@ class NewTaskFragment : Fragment() {
         with(binding) {
             if (titleEditText.text.isNullOrBlank() && descriptionEditText.text.isNullOrBlank() &&
                 dateEditText.text.isNullOrBlank() && timeEditText.text.isNullOrBlank()
-            ) findNavController().navigateUp() else showExitDialog()
+            ) findNavController().navigate(R.id.action_NewTaskFragment_to_viewPagerFragment)
+            else showExitDialog()
         }
     }
 
@@ -158,7 +159,7 @@ class NewTaskFragment : Fragment() {
         AlertDialog.Builder(context!!).apply {
             setMessage("Discard changes?")
             setPositiveButton("Yes") { _, _ ->
-                findNavController().navigateUp()
+                findNavController().navigate(R.id.action_NewTaskFragment_to_viewPagerFragment)
             }
             setNegativeButton("No", null)
         }.show()
