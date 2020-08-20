@@ -5,8 +5,10 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
@@ -57,6 +59,13 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
                 bundle
             )
         }
-        //todo binding delete setonclick
+        binding.root.setOnLongClickListener {
+            AlertDialog.Builder(context!!).apply {
+                setMessage("Delete task?")
+                setPositiveButton("Yes") { _, _ -> deleteCallback() }
+                setNegativeButton("No", null)
+            }.show()
+            false
+        }
     }
 }

@@ -46,6 +46,8 @@ class NewTaskFragment : Fragment() {
             hideKeyboard(context!!, binding.root)
         }
 
+        binding.cancelButton.setOnClickListener { onBackPressed() }
+
         return binding.root
     }
 
