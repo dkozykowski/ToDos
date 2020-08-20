@@ -13,13 +13,13 @@
         <action
             android:id="@+id/action_viewPagerFragment_to_NewTaskFragment"
             app:destination="@id/NewTaskFragment"
-            app:enterAnim="@anim/animation_enter_top"
-            app:exitAnim="@anim/animation_exit_bottom" />
+            app:enterAnim="@anim/animation_enter_right"
+            app:exitAnim="@anim/animation_exit_left" />
         <action
             android:id="@+id/action_viewPagerFragment_to_PreviewTaskFragment"
             app:destination="@id/PreviewTaskFragment"
-            app:enterAnim="@anim/animation_enter_bottom"
-            app:exitAnim="@anim/animation_exit_top" />
+            app:enterAnim="@anim/animation_enter_right"
+            app:exitAnim="@anim/animation_exit_left" />
     </fragment>
     <fragment
         android:id="@+id/NewTaskFragment"
@@ -29,8 +29,8 @@
         <action
             android:id="@+id/action_NewTaskFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment"
-            app:enterAnim="@anim/animation_enter_bottom"
-            app:exitAnim="@anim/animation_exit_top" />
+            app:enterAnim="@anim/animation_enter_left"
+            app:exitAnim="@anim/animation_exit_right" />
     </fragment>
     <fragment
         android:id="@+id/PreviewTaskFragment"
@@ -40,8 +40,8 @@
         <action
             android:id="@+id/action_PreviewTaskFragment_to_viewPagerFragment"
             app:destination="@id/viewPagerFragment"
-            app:enterAnim="@anim/animation_enter_top"
-            app:exitAnim="@anim/animation_exit_bottom" />
+            app:enterAnim="@anim/animation_enter_left"
+            app:exitAnim="@anim/animation_exit_right" />
     </fragment>
     <fragment
         android:id="@+id/activeTasksFragment"
