@@ -56,7 +56,7 @@ class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL).setDrawable()
+            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
             adapter = this@ActiveTasksFragment.adapter
         }
