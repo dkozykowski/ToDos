@@ -13,6 +13,8 @@ import androidx.viewpager.widget.ViewPager
 import com.ToxicBakery.viewpager.transforms.AccordionTransformer
 import com.ToxicBakery.viewpager.transforms.ScaleInOutTransformer
 import com.ToxicBakery.viewpager.transforms.ZoomInTransformer
+import com.gmail.dkozykowski.QueryTaskType
+import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentViewPagerBinding
 import kotlin.system.exitProcess
@@ -20,9 +22,9 @@ import kotlin.system.exitProcess
 class ViewPagerFragment : Fragment() {
     private lateinit var binding: FragmentViewPagerBinding
     private val pages = arrayOf(
-        ActiveTasksFragment(),
-        ImportantTasksFragment(),
-        DoneTasksFragment()
+        ActiveTasksFragment(::updateIdlePage),
+        ImportantTasksFragment(::updateIdlePage),
+        DoneTasksFragment(::updateIdlePage)
     )
     private val titles = arrayOf("Active", "Important", "Done")
 
@@ -43,21 +45,6 @@ class ViewPagerFragment : Fragment() {
 
         binding.viewPager.setPageTransformer(true, ScaleInOutTransformer())
 
-        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {}
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                pages[position].onResume()
-            }
-        })
-
         binding.tabLayout.setupWithViewPager(binding.viewPager)
 
         binding.newTaskButton.setOnClickListener {
@@ -75,5 +62,13 @@ class ViewPagerFragment : Fragment() {
             }
             setNegativeButton("No", null)
         }.show()
+    }
+
+    private fun updateIdlePage(position: Int) {
+        when (position) {
+            0 -> (pages[position] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
+            1 -> (pages[position] as ImportantTasksFragment).viewModel.loadTasks(IMPORTANT)
+            2 -> (pages[position] as DoneTasksFragment).viewModel.loadTasks(DONE)
+        }
     }
 }

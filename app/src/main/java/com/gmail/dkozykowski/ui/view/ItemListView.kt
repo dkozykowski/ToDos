@@ -28,7 +28,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     fun bind(
         task: Task,
         deleteCallback: () -> Unit,
-        updateCallback: (task: Task, context: Context) -> Unit
+        updateCallback: (task: Task) -> Unit
     ) {
         binding.title.text = task.title
         binding.description.text = task.description
@@ -37,14 +37,14 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
 
         binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->
             task.done = isChecked
-            updateCallback(task, context)
+            updateCallback(task)
         }
 
         binding.importantTaskCheckbox.setChecked(task.important, animate = false)
 
         binding.importantTaskCheckbox.setOnCheckStateListener {
             task.important = it
-            updateCallback(task, context)
+            updateCallback(task)
         }
 
         binding.root.setOnClickListener {

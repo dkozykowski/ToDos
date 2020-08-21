@@ -16,10 +16,10 @@ import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import com.gmail.dkozykowski.databinding.FragmentActiveTasksBinding
 
-class ActiveTasksFragment : Fragment() {
+class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
     lateinit var binding: FragmentActiveTasksBinding
-    private val adapter by lazy { TaskAdapter( ALL_ACTIVE )}
-    private lateinit var viewModel: TaskViewModel
+    private val adapter by lazy { TaskAdapter( ALL_ACTIVE, context!!, updateIdlePage)}
+    lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +54,7 @@ class ActiveTasksFragment : Fragment() {
 
         binding.emptyListText.visibility = GONE
         binding.recyclerView.run {
-            setHasFixedSize( false )
+            setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)

@@ -17,10 +17,10 @@ import com.gmail.dkozykowski.databinding.FragmentImportantTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class ImportantTasksFragment : Fragment() {
+class ImportantTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
     lateinit var binding: FragmentImportantTasksBinding
-    private val adapter by lazy { TaskAdapter(IMPORTANT) }
-    private lateinit var viewModel: TaskViewModel
+    private val adapter by lazy { TaskAdapter(IMPORTANT, context!!, updateIdlePage )}
+    lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,

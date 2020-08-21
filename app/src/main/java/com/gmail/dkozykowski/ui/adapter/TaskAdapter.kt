@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski.ui.adapter
 
+import android.content.Context
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.Toast
@@ -8,17 +9,22 @@ import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
-import com.gmail.dkozykowski.utils.minimum
 import com.gmail.dkozykowski.ui.view.ItemListView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+class TaskAdapter(
+    private val queryType: QueryTaskType,
+    context: Context,
+    private val updateIdlePageCallback: (Int) -> Unit
+) :
+    RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     class ViewHolder(val postView: ItemListView) : RecyclerView.ViewHolder(postView)
 
     private var data: ArrayList<Task> = ArrayList()
+    private var toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
 
     fun isDataEmpty(): Boolean {
         return (itemCount == 0)
@@ -46,47 +52,48 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
                 }
             }
             data.removeAt(position)
-            removeTaskAnimation(position)
-        }, updateCallback = { task, context ->
+            Handler().post {
+                notifyItemRemoved(position)
+            }
+        }, updateCallback = { task ->
             val index = data.indexOfFirst { it.uid == task.uid }
 
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
                     try {
                         DB.db.taskDao().updateTask(task)
+                        notifyIdleTaskListUpdated(task.done, task.important)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
             }
-
-            if ((queryType == ALL_ACTIVE && !task.done) || (queryType == DONE && task.done)) {
-                sortData()
-                moveTaskAnimation(index, data.indexOfFirst { it.uid == task.uid })
-            } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
-                val position = data.indexOfFirst { it.uid == task.uid }
-                data.removeAt(position)
-                removeTaskAnimation(position)
-                Toast.makeText(
-                    context, if (task.done) "Task moved to done"
-                    else "Task moved to active", Toast.LENGTH_SHORT
-                ).show()
-            } else if (queryType == IMPORTANT && !task.important) {
-                data.removeAt(index)
-                removeTaskAnimation(index)
-            }
+            displayTaskChangePresentation(index, task)
         })
     }
 
-    private fun removeTaskAnimation(position: Int) {
-        Handler().post {
-            notifyItemRemoved(position)
-        }
-    }
-
-    private fun moveTaskAnimation(oldPosition: Int, newPosition: Int) {
-        Handler().post {
-            notifyItemMoved(oldPosition, newPosition)
+    private fun displayTaskChangePresentation(index: Int, task: Task) {
+        if ((queryType == ALL_ACTIVE && !task.done) || (queryType == DONE && task.done)) {
+            sortData()
+            Handler().post {
+                notifyItemMoved(index, data.indexOfFirst { it.uid == task.uid })
+            }
+        } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
+            val position = data.indexOfFirst { it.uid == task.uid }
+            data.removeAt(position)
+            Handler().post {
+                notifyItemRemoved(position)
+            }
+            toast.setText(
+                if (task.done) "Task moved to done"
+                else "Task moved to active"
+            )
+            toast.show()
+        } else if (queryType == IMPORTANT && !task.important) {
+            data.removeAt(index)
+            Handler().post {
+                notifyItemRemoved(index)
+            }
         }
     }
 
@@ -104,5 +111,17 @@ class TaskAdapter(private val queryType: QueryTaskType) : RecyclerView.Adapter<T
             { it.date },
             { it.uid }
         ))
+    }
+
+    private fun notifyIdleTaskListUpdated(taskParamDone: Boolean, taskParamImportant: Boolean) {
+        if ((queryType == ALL_ACTIVE && !taskParamDone) || (queryType == DONE && taskParamDone)) {
+                updateIdlePageCallback(1)
+        } else if (queryType != DONE && taskParamDone) {
+            updateIdlePageCallback(2)
+        } else if (queryType == DONE && !taskParamDone) {
+            updateIdlePageCallback(0)
+        } else if (queryType == IMPORTANT && !taskParamImportant) {
+            updateIdlePageCallback(0)
+        }
     }
 }
