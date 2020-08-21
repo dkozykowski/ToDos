@@ -80,7 +80,7 @@ class NewTaskFragment : Fragment() {
     }
 
     private fun setupDatePicking() {
-        binding.calendarButton.setOnClickListener {
+        binding.dateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
             val calendar = Calendar.getInstance()
@@ -96,15 +96,15 @@ class NewTaskFragment : Fragment() {
         }
 
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                context!!,
-                binding.root
-            )
+            if (hasFocus) {
+                hideKeyboard(context!!, binding.root)
+                binding.dateEditText.callOnClick()
+            }
         }
     }
 
     private fun setupTimePicking() {
-        binding.timeButton.setOnClickListener {
+        binding.timeEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
             val time = Calendar.getInstance()
@@ -120,10 +120,10 @@ class NewTaskFragment : Fragment() {
         }
 
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                context!!,
-                binding.root
-            )
+            if (hasFocus) {
+                hideKeyboard(context!!, binding.root)
+                binding.timeEditText.callOnClick()
+            }
         }
     }
 

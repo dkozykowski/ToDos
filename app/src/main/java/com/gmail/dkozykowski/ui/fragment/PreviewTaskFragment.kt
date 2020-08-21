@@ -135,10 +135,6 @@ class PreviewTaskFragment : Fragment() {
 
     private fun updateEditViewProperties(type: Int) {
         with(binding) {
-            timeButtonIcon.visibility = type
-            calendarButtonIcon.visibility = type
-            timeButton.visibility = type
-            calendarButton.visibility = type
             titleInputLayout.visibility = type
             descriptionInputLayout.visibility = type
             dateInputLayout.visibility = type
@@ -156,11 +152,16 @@ class PreviewTaskFragment : Fragment() {
     private fun updatePreviewViewProperties(type: Int) {
         with(binding) {
             titleText.visibility = type
+            titleHeader.visibility = type
             descriptionText.visibility = type
+            descriptionHeader.visibility = type
             dateAndTimeText.visibility = type
+            dateAndTimeHeader.visibility = type
             closePreviewButton.visibility = type
             editButton.visibility = type
             editButtonIcon.visibility = type
+            line1.visibility = type
+            line2.visibility = type
         }
     }
 
@@ -184,7 +185,7 @@ class PreviewTaskFragment : Fragment() {
     }
 
     private fun setupDatePicking() {
-        binding.calendarButton.setOnClickListener {
+        binding.dateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
             val calendar = Calendar.getInstance()
@@ -200,15 +201,15 @@ class PreviewTaskFragment : Fragment() {
         }
 
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                context!!,
-                binding.root
-            )
+            if (hasFocus && isEditMode) {
+                hideKeyboard(context!!, binding.root)
+                binding.dateEditText.callOnClick()
+            }
         }
     }
 
     private fun setupTimePicking() {
-        binding.timeButton.setOnClickListener {
+        binding.timeEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
             val time = Calendar.getInstance()
@@ -224,10 +225,10 @@ class PreviewTaskFragment : Fragment() {
         }
 
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(
-                context!!,
-                binding.root
-            )
+            if (hasFocus && isEditMode) {
+                hideKeyboard(context!!, binding.root)
+                binding.timeEditText.callOnClick()
+            }
         }
     }
 
