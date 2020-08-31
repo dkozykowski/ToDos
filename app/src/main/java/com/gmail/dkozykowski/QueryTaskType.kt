@@ -1,3 +1,3 @@
 package com.gmail.dkozykowski
 
-enum class QueryTaskType { ALL_ACTIVE, IMPORTANT, DONE}
+enum class QueryTaskType { TODAYS, ALL_ACTIVE, DONE}

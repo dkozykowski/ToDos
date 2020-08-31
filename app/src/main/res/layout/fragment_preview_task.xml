@@ -197,15 +197,28 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/dateAndTimeText"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:maxLines="12"
             android:text="Loading..."
             android:textColor="@color/md_black_1000"
             android:textSize="16dp"
             android:typeface="sans"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dateAndTimeHeader" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/timeLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="(0 min left)"
+            android:textColor="@color/md_black_1000"
+            android:textSize="16dp"
+            android:typeface="sans"
+            app:layout_constraintBottom_toBottomOf="@id/dateAndTimeText"
+            app:layout_constraintStart_toEndOf="@id/dateAndTimeText"
+            app:layout_constraintTop_toTopOf="@id/dateAndTimeText" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/closePreviewButton"

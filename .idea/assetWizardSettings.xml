@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_round_title_24" />
-                            <entry key="sourceFile" value="C:\Users\MS\Desktop\ToDos" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_sunset" />
+                            <entry key="sourceFile" value="C:\Users\MS\Desktop\sunset.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -11,8 +11,8 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE done ")
     fun getDoneTasks(): List<Task>
 
-    @Query("SELECT * FROM task WHERE important AND not done")
-    fun getImportantActiveTasks(): List<Task>
+    @Query("SELECT * FROM task WHERE date(datetime(date / 1000, 'unixepoch')) = date('now') AND not done")
+    fun getTodaysActiveTasks(): List<Task>
 
     @Query("SELECT * FROM task WHERE uid = :id")
     fun getTaskById(id: Int): Task

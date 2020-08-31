@@ -67,5 +67,20 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
             }.show()
             false
         }
+
+        setTimeLeftText(task.date)
+    }
+
+    private fun setTimeLeftText(date: Long) {
+        val timestamp = (date - System.currentTimeMillis()) / 1000
+        binding.timeLeft.text =
+            when {
+                timestamp < 0 -> "(time passed)"
+                timestamp < 300 -> "(< 5 min left)"
+                timestamp < 3600 -> "(${timestamp / 60} min left)"
+                timestamp < 172800 -> "(1 day left)"
+                timestamp < 31536000 -> "(${timestamp / 86400} days left)"
+                else -> "(> 365 days left)"
+            }
     }
 }

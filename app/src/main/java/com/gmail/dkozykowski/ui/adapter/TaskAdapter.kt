@@ -18,7 +18,8 @@ import kotlinx.coroutines.withContext
 class TaskAdapter(
     private val queryType: QueryTaskType,
     context: Context,
-    private val updateIdlePageCallback: (Int) -> Unit
+    private val updateIdlePageCallback: (Int) -> Unit,
+    private val showEmptyInfo: () -> Unit
 ) :
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     class ViewHolder(val postView: ItemListView) : RecyclerView.ViewHolder(postView)
@@ -52,9 +53,8 @@ class TaskAdapter(
                 }
             }
             data.removeAt(position)
-            Handler().post {
-                notifyItemRemoved(position)
-            }
+            if (isDataEmpty()) showEmptyInfo()
+            Handler().post { notifyItemRemoved(position) }
         }, updateCallback = { task ->
             val index = data.indexOfFirst { it.uid == task.uid }
 
@@ -62,7 +62,7 @@ class TaskAdapter(
                 withContext(Dispatchers.IO) {
                     try {
                         DB.db.taskDao().updateTask(task)
-                        notifyIdleTaskListUpdated(task.done, task.important)
+                        notifyIdleTaskListUpdated(task.done)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -81,19 +81,13 @@ class TaskAdapter(
         } else if ((queryType != DONE && task.done) || (queryType == DONE && !task.done)) {
             val position = data.indexOfFirst { it.uid == task.uid }
             data.removeAt(position)
-            Handler().post {
-                notifyItemRemoved(position)
-            }
+            if (isDataEmpty()) showEmptyInfo()
+            Handler().post { notifyItemRemoved(position) }
             toast.setText(
                 if (task.done) "Task moved to done"
                 else "Task moved to active"
             )
             toast.show()
-        } else if (queryType == IMPORTANT && !task.important) {
-            data.removeAt(index)
-            Handler().post {
-                notifyItemRemoved(index)
-            }
         }
     }
 
@@ -113,15 +107,19 @@ class TaskAdapter(
         ))
     }
 
-    private fun notifyIdleTaskListUpdated(taskParamDone: Boolean, taskParamImportant: Boolean) {
+    private fun notifyIdleTaskListUpdated(taskParamDone: Boolean) {
         if ((queryType == ALL_ACTIVE && !taskParamDone) || (queryType == DONE && taskParamDone)) {
-                updateIdlePageCallback(1)
+                updateIdlePageCallback(0)
         } else if (queryType != DONE && taskParamDone) {
             updateIdlePageCallback(2)
         } else if (queryType == DONE && !taskParamDone) {
             updateIdlePageCallback(0)
-        } else if (queryType == IMPORTANT && !taskParamImportant) {
-            updateIdlePageCallback(0)
+            updateIdlePageCallback(1)
+        } else if (queryType == TODAYS && taskParamDone) {
+            updateIdlePageCallback(1)
+            updateIdlePageCallback(2)
+        } else if (queryType == TODAYS && !taskParamDone) {
+            updateIdlePageCallback(1)
         }
     }
 }

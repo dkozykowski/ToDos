@@ -1,6 +1,7 @@
 package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -12,14 +13,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gmail.dkozykowski.QueryTaskType.IMPORTANT
-import com.gmail.dkozykowski.databinding.FragmentImportantTasksBinding
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import com.gmail.dkozykowski.QueryTaskType.TODAYS
+import com.gmail.dkozykowski.databinding.FragmentTodaysTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class ImportantTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
-    lateinit var binding: FragmentImportantTasksBinding
-    private val adapter by lazy { TaskAdapter(IMPORTANT, context!!, updateIdlePage )}
+class TodaysTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
+    lateinit var binding: FragmentTodaysTasksBinding
+    private val adapter by lazy { TaskAdapter(TODAYS, context!!, updateIdlePage, ::showEmptyInfo) }
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -27,7 +29,7 @@ class ImportantTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragme
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentImportantTasksBinding.inflate(inflater, container, false)
+        binding = FragmentTodaysTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()
@@ -43,6 +45,7 @@ class ImportantTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragme
                 is TaskViewModel.LoadViewState.Success -> {
                     adapter.updateData(viewState.data)
                     binding.emptyListText.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
+                    binding.emptyListIcon.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
                 }
             }
         })
@@ -53,19 +56,27 @@ class ImportantTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.emptyListIcon.visibility = GONE
         binding.emptyListText.visibility = GONE
         binding.recyclerView.run {
             setHasFixedSize(false)
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            layoutManager = LinearLayoutManager(context, VERTICAL, false)
+            val dividerItemDecoration = DividerItemDecoration(context, VERTICAL)
             addItemDecoration(dividerItemDecoration)
-            adapter = this@ImportantTasksFragment.adapter
+            adapter = this@TodaysTasksFragment.adapter
         }
-        viewModel.loadTasks(IMPORTANT)
+        viewModel.loadTasks(TODAYS)
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(IMPORTANT)
+        viewModel.loadTasks(TODAYS)
+    }
+
+    private fun showEmptyInfo() {
+        Handler().postDelayed({
+            binding.emptyListIcon.visibility = VISIBLE
+            binding.emptyListText.visibility = VISIBLE
+        }, 200)
     }
 }

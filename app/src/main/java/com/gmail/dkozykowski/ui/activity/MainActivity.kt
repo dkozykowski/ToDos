@@ -38,11 +38,11 @@ class MainActivity : AppCompatActivity() {
                 val fragment = navHostFragment!!.childFragmentManager.fragments[0] as ViewPagerFragment
                 fragment.onBackPressed()
             }
-            R.id.PreviewTaskFragment -> {
+            R.id.previewTaskFragment -> {
                 val fragment = navHostFragment!!.childFragmentManager.fragments[0] as PreviewTaskFragment
                 fragment.onBackPressed()
             }
-            R.id.NewTaskFragment -> {
+            R.id.newTaskFragment -> {
                 val fragment = navHostFragment!!.childFragmentManager.fragments[0] as NewTaskFragment
                 fragment.onBackPressed()
             }

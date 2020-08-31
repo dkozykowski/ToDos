@@ -9,11 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager.widget.ViewPager
-import com.ToxicBakery.viewpager.transforms.AccordionTransformer
 import com.ToxicBakery.viewpager.transforms.ScaleInOutTransformer
-import com.ToxicBakery.viewpager.transforms.ZoomInTransformer
-import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentViewPagerBinding
@@ -22,11 +18,11 @@ import kotlin.system.exitProcess
 class ViewPagerFragment : Fragment() {
     private lateinit var binding: FragmentViewPagerBinding
     private val pages = arrayOf(
+        TodaysTasksFragment(::updateIdlePage),
         ActiveTasksFragment(::updateIdlePage),
-        ImportantTasksFragment(::updateIdlePage),
         DoneTasksFragment(::updateIdlePage)
     )
-    private val titles = arrayOf("Active", "Important", "Done")
+    private val titles = arrayOf("Today's", "Active", "Done")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,8 +62,8 @@ class ViewPagerFragment : Fragment() {
 
     private fun updateIdlePage(position: Int) {
         when (position) {
-            0 -> (pages[position] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
-            1 -> (pages[position] as ImportantTasksFragment).viewModel.loadTasks(IMPORTANT)
+            0 -> (pages[position] as TodaysTasksFragment).viewModel.loadTasks(TODAYS)
+            1 -> (pages[position] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
             2 -> (pages[position] as DoneTasksFragment).viewModel.loadTasks(DONE)
         }
     }

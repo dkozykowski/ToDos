@@ -1,9 +1,11 @@
 package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -11,14 +13,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.gmail.dkozykowski.QueryTaskType.DONE
+import com.gmail.dkozykowski.databinding.FragmentDoneTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
-import com.gmail.dkozykowski.databinding.FragmentDoneTasksBinding
 
 class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
     lateinit var binding: FragmentDoneTasksBinding
-    private val adapter by lazy { TaskAdapter( DONE, context!!, updateIdlePage )}
+    private val adapter by lazy { TaskAdapter( DONE, context!!, updateIdlePage, ::showEmptyInfo )}
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -42,6 +45,7 @@ class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() 
                 is TaskViewModel.LoadViewState.Success -> {
                     adapter.updateData(viewState.data)
                     binding.emptyListText.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
+                    binding.emptyListIcon.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
                 }
             }
         })
@@ -52,11 +56,12 @@ class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emptyListText.visibility = GONE
+        binding.emptyListIcon.visibility = VISIBLE
+        binding.emptyListText.visibility = VISIBLE
         binding.recyclerView.run {
             setHasFixedSize(false)
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            val dividerItemDecoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            layoutManager = LinearLayoutManager(context, VERTICAL, false)
+            val dividerItemDecoration = DividerItemDecoration(context, VERTICAL)
             addItemDecoration(dividerItemDecoration)
             adapter = this@DoneTasksFragment.adapter
         }
@@ -66,5 +71,12 @@ class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() 
     override fun onResume() {
         super.onResume()
         viewModel.loadTasks( DONE )
+    }
+
+    private fun showEmptyInfo() {
+        Handler().postDelayed({
+            binding.emptyListIcon.visibility = VISIBLE
+            binding.emptyListText.visibility = VISIBLE
+        }, 200)
     }
 }
