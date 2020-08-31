@@ -37,6 +37,7 @@
             android:drawablePadding="10dp"
             android:ellipsize="end"
             android:maxLength="300"
+            android:maxLines="3"
             android:text="Task description"
             android:textColor="@color/md_grey_700"
             app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
