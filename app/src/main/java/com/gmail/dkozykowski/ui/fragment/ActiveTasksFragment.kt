@@ -76,6 +76,6 @@ class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
         Handler().postDelayed({
             binding.emptyListIcon.visibility = VISIBLE
             binding.emptyListText.visibility = VISIBLE
-        }, 200)
+        }, 250)
     }
 }

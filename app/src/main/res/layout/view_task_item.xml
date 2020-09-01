@@ -13,17 +13,19 @@
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:drawableStart="@drawable/ic_round_title_24"
+            android:drawablePadding="10dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
             android:text="Task title"
-            android:drawableStart="@drawable/ic_round_title_24"
-            android:drawablePadding="10dp"
             android:textColor="@color/md_black_1000"
             android:textSize="17dp"
-            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckboxLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,8 +33,10 @@
             android:id="@+id/description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableStart="@drawable/ic_round_description_24"
             android:drawablePadding="10dp"
             android:ellipsize="end"
@@ -40,7 +44,7 @@
             android:maxLines="3"
             android:text="Task description"
             android:textColor="@color/md_grey_700"
-            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckboxLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
@@ -48,8 +52,9 @@
             android:id="@+id/date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableStart="@drawable/ic_calendar_24"
             android:drawablePadding="10dp"
             android:ellipsize="end"
@@ -64,34 +69,42 @@
             android:id="@+id/timeLeft"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:text="(0 min left)"
             android:textColor="@color/md_grey_700"
             app:layout_constraintBottom_toBottomOf="@id/date"
-            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckbox"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckboxLayout"
             app:layout_constraintStart_toEndOf="@id/date"
             app:layout_constraintTop_toTopOf="@id/date" />
 
-        <com.gmail.dkozykowski.ui.view.StarCheckboxView
-            android:id="@+id/importantTaskCheckbox"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+        <LinearLayout
+            android:id="@+id/importantTaskCheckboxLayout"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginStart="12dp"
-            android:layout_marginBottom="12dp"
             android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="@+id/date"
             app:layout_constraintEnd_toStartOf="@+id/doneCheckbox"
-            app:layout_constraintTop_toTopOf="@+id/title" />
+            app:layout_constraintTop_toTopOf="@+id/title">
+
+            <com.gmail.dkozykowski.ui.view.StarCheckboxView
+                android:id="@+id/importantTaskCheckbox"
+                android:layout_width="32dp"
+                android:layout_height="32dp"/>
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/doneCheckbox"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/importantTaskCheckbox"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/importantTaskCheckboxLayout"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/importantTaskCheckbox" />
+            app:layout_constraintTop_toTopOf="@+id/importantTaskCheckboxLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

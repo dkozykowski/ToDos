@@ -40,11 +40,18 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
             updateCallback(task)
         }
 
+        binding.importantTaskCheckboxLayout.setOnClickListener { binding.importantTaskCheckbox.callOnClick() }
+
         binding.importantTaskCheckbox.setChecked(task.important, animate = false)
 
         binding.importantTaskCheckbox.setOnCheckStateListener {
             task.important = it
             updateCallback(task)
+        }
+
+        binding.importantTaskCheckboxLayout.setOnClickListener {
+            binding.importantTaskCheckbox.isPressed = true
+            binding.importantTaskCheckbox.callOnClick()
         }
 
         binding.root.setOnClickListener {

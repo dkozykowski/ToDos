@@ -49,7 +49,7 @@ class PreviewTaskFragment : Fragment() {
         setTimeLeftText(date)
 
         binding.closePreviewButton.setOnClickListener {
-            findNavController().navigate(R.id.action_PreviewTaskFragment_to_viewPagerFragment)
+            findNavController().navigateUp()
         }
 
         binding.editButton.setOnClickListener {
@@ -89,7 +89,7 @@ class PreviewTaskFragment : Fragment() {
                 isEditMode = false
                 updateMode()
             }
-        } else findNavController().navigate(R.id.action_PreviewTaskFragment_to_viewPagerFragment)
+        } else findNavController().navigateUp()
     }
 
     private fun setupSaveButton() {
