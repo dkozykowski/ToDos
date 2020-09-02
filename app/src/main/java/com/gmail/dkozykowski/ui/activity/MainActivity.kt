@@ -12,6 +12,7 @@ import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.ui.fragment.NewTaskFragment
 import com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment
+import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment
 import com.gmail.dkozykowski.ui.fragment.ViewPagerFragment
 
 
@@ -44,6 +45,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.newTaskFragment -> {
                 val fragment = navHostFragment!!.childFragmentManager.fragments[0] as NewTaskFragment
+                fragment.onBackPressed()
+            }
+            R.id.searchTasksFragment -> {
+                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as SearchTasksFragment
                 fragment.onBackPressed()
             }
         }

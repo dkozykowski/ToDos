@@ -46,6 +46,11 @@ class ViewPagerFragment : Fragment() {
         binding.newTaskButton.setOnClickListener {
             findNavController().navigate(R.id.action_viewPagerFragment_to_NewTaskFragment)
         }
+
+        binding.searchButton.setOnClickListener {
+            findNavController().navigate(R.id.action_viewPagerFragment_to_searchTasksFragment)
+        }
+
         return binding.root
     }
 

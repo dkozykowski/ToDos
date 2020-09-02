@@ -15,6 +15,8 @@ import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.FragmentNewTaskBinding
 import com.gmail.dkozykowski.utils.hideKeyboard
+import com.gmail.dkozykowski.utils.openPickDateDialog
+import com.gmail.dkozykowski.utils.openPickTimeDialog
 import com.gmail.dkozykowski.utils.stringToDate
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import java.util.*
@@ -83,18 +85,8 @@ class NewTaskFragment : Fragment() {
         binding.dateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
-            val calendar = Calendar.getInstance()
-            DatePickerDialog(
-                context!!,
-                { _, year, month, dayOfMonth ->
-                    binding.dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            openPickDateDialog(context!!, binding.dateEditText)
         }
-
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 hideKeyboard(context!!, binding.root)
@@ -107,18 +99,8 @@ class NewTaskFragment : Fragment() {
         binding.timeEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
-            val time = Calendar.getInstance()
-            TimePickerDialog(
-                context!!,
-                { _, hour, minute ->
-                    binding.timeEditText.setText("%02d:%02d".format(hour, minute))
-                },
-                time.get(Calendar.HOUR),
-                time.get(Calendar.MINUTE),
-                true
-            ).show()
+            openPickTimeDialog(context!!, binding.timeEditText)
         }
-
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 hideKeyboard(context!!, binding.root)

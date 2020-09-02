@@ -24,6 +24,13 @@
             app:exitAnim="@anim/animation_exit_left"
             app:popEnterAnim="@anim/animation_enter_left"
             app:popExitAnim="@anim/animation_exit_right" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_searchTasksFragment"
+            app:destination="@id/searchTasksFragment"
+            app:enterAnim="@anim/animation_enter_right"
+            app:exitAnim="@anim/animation_exit_left"
+            app:popEnterAnim="@anim/animation_enter_left"
+            app:popExitAnim="@anim/animation_exit_right" />
     </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
@@ -50,5 +57,18 @@
         android:name="com.gmail.dkozykowski.ui.fragment.DoneTasksFragment"
         android:label="DoneTasksFragment"
         tools:layout="@layout/fragment_done_tasks" />
+    <fragment
+        android:id="@+id/searchTasksFragment"
+        android:name="com.gmail.dkozykowski.ui.fragment.SearchTasksFragment"
+        android:label="SearchTasksFragment"
+        tools:layout="@layout/fragment_search_tasks">
+        <action
+            android:id="@+id/action_searchTasksFragment_to_previewTaskFragment"
+            app:destination="@id/previewTaskFragment"
+            app:enterAnim="@anim/animation_enter_right"
+            app:exitAnim="@anim/animation_exit_left"
+            app:popEnterAnim="@anim/animation_enter_left"
+            app:popExitAnim="@anim/animation_exit_right"/>
+    </fragment>
 
 </navigation>

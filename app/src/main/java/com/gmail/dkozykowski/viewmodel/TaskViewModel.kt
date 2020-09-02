@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gmail.dkozykowski.QueryTaskType
+import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import kotlinx.coroutines.Dispatchers
@@ -24,9 +25,10 @@ class TaskViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 try {
                     val tasks = when (queryType) {
-                        QueryTaskType.TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
-                        QueryTaskType.ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
-                        QueryTaskType.DONE -> DB.db.taskDao().getDoneTasks()
+                        TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
+                        ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
+                        DONE -> DB.db.taskDao().getDoneTasks()
+                        SEARCH -> DB.db.taskDao().getAllActiveTasks()
                     }
                     loadTaskLiveData.postValue(
                         LoadViewState.Success(
@@ -85,10 +87,11 @@ class TaskViewModel : ViewModel() {
                         taskDao.updateTask(task)
                     }
 
-                    sendTaskLiveData.postValue(SendViewState.Success)
+                    updateTaskLiveData.postValue(UpdateViewState.Success)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    sendTaskLiveData.postValue(SendViewState.Error(e.message.toString()))
+                    updateTaskLiveData.postValue(UpdateViewState.Error(e.message.toString()))
+                    return@withContext
                 }
             }
         }

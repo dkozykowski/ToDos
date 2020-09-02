@@ -73,7 +73,9 @@ class TaskAdapter(
     }
 
     private fun displayTaskChangePresentation(index: Int, task: Task) {
-        if ((queryType == ALL_ACTIVE && !task.done) || (queryType == DONE && task.done)) {
+        if ((queryType == ALL_ACTIVE && !task.done)
+            || (queryType == DONE && task.done)
+            || (queryType == TODAYS && !task.done)) {
             sortData()
             Handler().post {
                 notifyItemMoved(index, data.indexOfFirst { it.uid == task.uid })

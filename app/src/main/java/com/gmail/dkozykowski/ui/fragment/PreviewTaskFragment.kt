@@ -46,7 +46,8 @@ class PreviewTaskFragment : Fragment() {
         setupDatePicking()
         setupTimePicking()
         setupSaveButton()
-        setTimeLeftText(date)
+
+        binding.timeLeft.text = getTimeLeftText(date)
 
         binding.closePreviewButton.setOnClickListener {
             findNavController().navigateUp()
@@ -102,7 +103,6 @@ class PreviewTaskFragment : Fragment() {
                 binding.saveButton.isClickable = false
                 isEditMode = false
                 updateMode()
-
                 viewModel.updateTask(uid, title, description, date)
             }
         }
@@ -130,6 +130,7 @@ class PreviewTaskFragment : Fragment() {
                 titleText.text = title
                 descriptionText.text = description
                 dateAndTimeText.text = getDateAndTimeFromLong(date)
+                timeLeft.text = getTimeLeftText(date)
             }
         }
     }
@@ -189,18 +190,8 @@ class PreviewTaskFragment : Fragment() {
         binding.dateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
-            val calendar = Calendar.getInstance()
-            DatePickerDialog(
-                context!!,
-                { _, year, month, dayOfMonth ->
-                    binding.dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            openPickDateDialog(context!!, binding.dateEditText)
         }
-
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && isEditMode) {
                 hideKeyboard(context!!, binding.root)
@@ -213,16 +204,7 @@ class PreviewTaskFragment : Fragment() {
         binding.timeEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.timeEditText.error = null
-            val time = Calendar.getInstance()
-            TimePickerDialog(
-                context!!,
-                { _, hour, minute ->
-                    binding.timeEditText.setText("%02d:%02d".format(hour, minute))
-                },
-                time.get(Calendar.HOUR),
-                time.get(Calendar.MINUTE),
-                true
-            ).show()
+            openPickTimeDialog(context!!, binding.timeEditText)
         }
 
         binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -254,18 +236,5 @@ class PreviewTaskFragment : Fragment() {
         }
 
         return isPreviewTaskSheetCorrect
-    }
-
-    private fun setTimeLeftText(date: Long) {
-        val timestamp = (date - System.currentTimeMillis()) / 1000
-        binding.timeLeft.text =
-            when {
-                timestamp < 0 -> "(time passed)"
-                timestamp < 300 -> "(< 5 min left)"
-                timestamp < 3600 -> "(${timestamp / 60} min left)"
-                timestamp < 172800 -> "(1 day left)"
-                timestamp < 31536000 -> "(${timestamp / 86400} days left)"
-                else -> "(> 365 days left)"
-            }
     }
 }
