@@ -6,31 +6,18 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.getSystemService
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun stringToDate(dateString: String): Long {
+fun dateToTimestamp(dateString: String): Long {
     return SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).parse(dateString)!!.time
 }
 
 
-fun getDateAndTimeFromLong(time: Long): String {
+fun timestampToDate(time: Long): String {
     val date = Date(time)
     val format = SimpleDateFormat("dd.MM.yyyy HH:mm")
-    return format.format(date)
-}
-
-fun getDateFromLong(time: Long): String {
-    val date = Date(time)
-    val format = SimpleDateFormat("dd.MM.yyyy")
-    return format.format(date)
-}
-
-fun getTimeFromLong(time: Long): String {
-    val date = Date(time)
-    val format = SimpleDateFormat("HH:mm")
     return format.format(date)
 }
 
@@ -57,17 +44,30 @@ fun getTimeLeftText(date: Long) : String{
 
 fun openPickDateDialog(context: Context, dateEditText: TextInputEditText) {
     val calendar = Calendar.getInstance()
-    if (!dateEditText.text.isNullOrBlank()) {
+    if (!dateEditText.isTextBlank()) {
         calendar.time =
             SimpleDateFormat(
-                "dd.MM.yyyy",
+                "dd.MM.yyyy HH:mm",
                 Locale.getDefault()
             ).parse(dateEditText.text.toString())!!
     }
+
+    val timePickerDialog = TimePickerDialog(
+        context,
+        { _, hour, minute ->
+            dateEditText.setText("${dateEditText.text} %02d:%02d".format(hour, minute))
+        },
+        calendar.get(Calendar.HOUR_OF_DAY),
+        calendar.get(Calendar.MINUTE),
+        true
+    )
+    timePickerDialog.setOnCancelListener{ dateEditText.text = null }
+
     DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
             dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
+            timePickerDialog.show()
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -75,23 +75,19 @@ fun openPickDateDialog(context: Context, dateEditText: TextInputEditText) {
     ).show()
 }
 
-fun openPickTimeDialog(context: Context, timeEditText: TextInputEditText) {
-    val time = Calendar.getInstance()
-    if (!timeEditText.text.isNullOrBlank()) {
-        time.time =
-            SimpleDateFormat(
-                "HH:mm",
-                Locale.getDefault()
-            ).parse(timeEditText.text.toString())!!
-    }
-    TimePickerDialog(
-        context,
-        { _, hour, minute ->
-            timeEditText.setText("%02d:%02d".format(hour, minute))
-        },
-        time.get(Calendar.HOUR_OF_DAY),
-        time.get(Calendar.MINUTE),
-        true
-    ).show()
+fun TextInputEditText.text() : String {
+    return this.text.toString()
+}
+
+fun TextInputEditText.isTextBlank() : Boolean {
+    return this.text.isNullOrBlank()
+}
+
+fun View.setAsVisible() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.setAsHidden() {
+    this.visibility = View.GONE
 }
 

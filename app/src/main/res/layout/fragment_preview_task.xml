@@ -18,219 +18,233 @@
             app:title="ToDos:  Preview the task"
             app:titleTextColor="@color/md_white_1000" />
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/titleInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:autofillHints=""
-            android:inputType="textFilter|textMultiLine|textNoSuggestions"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/editModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            app:startIconCheckable="true"
-            android:padding="10dp"
-            app:startIconDrawable="@drawable/ic_round_title_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/titleEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="Title"
-                android:inputType="textFilter|textMultiLine|textNoSuggestions"
-                android:maxLength="20"
-                android:visibility="gone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/descriptionInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:inputType="textFilter|textMultiLine|textNoSuggestions"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleInputLayout"
-            app:startIconCheckable="true"
-            android:padding="10dp"
-            app:startIconDrawable="@drawable/ic_round_description_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/descriptionEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:hint="Description"
-                android:inputType="textFilter|textMultiLine|textNoSuggestions"
-                android:maxLines="12"
-                android:singleLine="false"
-                android:visibility="gone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dateInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionInputLayout"
-            app:startIconCheckable="true"
-            android:padding="10dp"
-            app:startIconDrawable="@drawable/ic_calendar_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/dateEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:editable="false"
-                android:focusable="true"
-                android:hint="Date"
-                android:maxLines="1"
-                android:visibility="gone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/timeInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
-            app:startIconCheckable="true"
-            android:padding="10dp"
-            app:startIconDrawable="@drawable/ic_baseline_access_time_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/timeEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:editable="false"
-                android:focusable="true"
-                android:hint="Time"
-                android:maxLines="1"
-                android:visibility="gone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/titleHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:drawableStart="@drawable/ic_round_title_24"
-            android:drawablePadding="10dp"
-            android:text="Title: "
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/titleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Loading... "
-            android:textColor="@color/md_black_1000"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintTop_toBottomOf="@+id/titleHeader" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/descriptionHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:drawableStart="@drawable/ic_round_description_24"
-            android:drawablePadding="10dp"
-            android:text="Description:"
-            android:textColor="@color/md_grey_700"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintTop_toBottomOf="@+id/line1" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/descriptionText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:maxLines="12"
-            android:text="Loading..."
-            android:textColor="@color/md_black_1000"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionHeader" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dateAndTimeHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:drawableStart="@drawable/ic_calendar_24"
-            android:drawablePadding="10dp"
-            android:maxLines="12"
-            android:text="Date:"
-            android:textColor="@color/md_grey_700"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintTop_toBottomOf="@+id/line2" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dateAndTimeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Loading..."
-            android:textColor="@color/md_black_1000"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateAndTimeHeader" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timeLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="(0 min left)"
-            android:textColor="@color/md_black_1000"
-            android:textSize="16dp"
-            android:typeface="sans"
-            app:layout_constraintBottom_toBottomOf="@id/dateAndTimeText"
-            app:layout_constraintStart_toEndOf="@id/dateAndTimeText"
-            app:layout_constraintTop_toTopOf="@id/dateAndTimeText" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/closePreviewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="OK"
-            android:textColor="@color/md_white_1000"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/titleInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:autofillHints=""
+                android:inputType="textFilter|textMultiLine|textNoSuggestions"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:startIconCheckable="true"
+                app:startIconDrawable="@drawable/ic_round_title_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/titleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="Title"
+                    android:inputType="textFilter|textMultiLine|textNoSuggestions"
+                    android:maxLength="20" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/descriptionInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:inputType="textFilter|textMultiLine|textNoSuggestions"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleInputLayout"
+                app:startIconCheckable="true"
+                app:startIconDrawable="@drawable/ic_round_description_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/descriptionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="Description"
+                    android:inputType="textFilter|textMultiLine|textNoSuggestions"
+                    android:maxLines="12"
+                    android:singleLine="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dateInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/descriptionInputLayout"
+                app:startIconCheckable="true"
+                app:startIconDrawable="@drawable/ic_calendar_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dateEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:hint="Date"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="24dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="SAVE"
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/previewModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/titleHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@drawable/ic_round_title_24"
+                android:text=" Title: "
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Loading... "
+                android:textColor="@color/md_black_1000"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintTop_toBottomOf="@id/titleHeader" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/descriptionHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@drawable/ic_round_description_24"
+                android:text=" Description:"
+                android:textColor="@color/md_grey_700"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintTop_toBottomOf="@id/line1" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/descriptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:maxLines="12"
+                android:text="Loading..."
+                android:textColor="@color/md_black_1000"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintTop_toBottomOf="@id/descriptionHeader" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dateHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:drawableStart="@drawable/ic_calendar_24"
+                android:maxLines="12"
+                android:text=" Date:"
+                android:textColor="@color/md_grey_700"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintTop_toBottomOf="@id/line2" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:maxLines="12"
+                android:text="Loading..."
+                android:textColor="@color/md_black_1000"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dateHeader" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/timeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:maxLines="12"
+                android:text="(0 min left)"
+                android:textColor="@color/md_black_1000"
+                android:textSize="16dp"
+                android:typeface="sans"
+                app:layout_constraintBottom_toBottomOf="@id/dateText"
+                app:layout_constraintStart_toEndOf="@id/dateText"
+                app:layout_constraintTop_toTopOf="@id/dateText" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/closePreviewButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="24dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="OK"
+                android:textColor="@color/md_white_1000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <View
+                android:id="@+id/line1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/md_grey_500"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/titleText" />
+
+            <View
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/md_grey_500"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/descriptionText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/editButton"
@@ -242,9 +256,9 @@
             android:elevation="4dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintEnd_toEndOf="@+id/toolbar"
-            app:layout_constraintTop_toTopOf="@+id/toolbar" />
+            app:layout_constraintBottom_toBottomOf="@id/toolbar"
+            app:layout_constraintEnd_toEndOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="@id/toolbar" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/editButtonIcon"
@@ -253,10 +267,10 @@
             android:elevation="6dp"
             android:src="@drawable/ic_round_edit_24"
             android:tint="@color/md_white_1000"
-            app:layout_constraintBottom_toBottomOf="@+id/editButton"
-            app:layout_constraintEnd_toEndOf="@+id/editButton"
-            app:layout_constraintStart_toStartOf="@+id/editButton"
-            app:layout_constraintTop_toTopOf="@+id/editButton" />
+            app:layout_constraintBottom_toBottomOf="@id/editButton"
+            app:layout_constraintEnd_toEndOf="@id/editButton"
+            app:layout_constraintStart_toStartOf="@id/editButton"
+            app:layout_constraintTop_toTopOf="@id/editButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"
@@ -269,9 +283,9 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintEnd_toEndOf="@+id/toolbar"
-            app:layout_constraintTop_toTopOf="@+id/toolbar" />
+            app:layout_constraintBottom_toBottomOf="@id/toolbar"
+            app:layout_constraintEnd_toEndOf="@id/toolbar"
+            app:layout_constraintTop_toTopOf="@id/toolbar" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/cancelButtonIcon"
@@ -281,43 +295,10 @@
             android:src="@drawable/ic_round_close_24"
             android:tint="@color/md_white_1000"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
-            app:layout_constraintEnd_toEndOf="@+id/cancelButton"
-            app:layout_constraintStart_toStartOf="@+id/cancelButton"
-            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="SAVE"
-            android:textColor="@color/md_white_1000"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <View
-            android:id="@+id/line1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/md_grey_500"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleText" />
-
-        <View
-            android:id="@+id/line2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/md_grey_500"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionText" />
+            app:layout_constraintBottom_toBottomOf="@id/cancelButton"
+            app:layout_constraintEnd_toEndOf="@id/cancelButton"
+            app:layout_constraintStart_toStartOf="@id/cancelButton"
+            app:layout_constraintTop_toTopOf="@id/cancelButton" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

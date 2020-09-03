@@ -13,14 +13,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.ALL_ACTIVE
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 import com.gmail.dkozykowski.databinding.FragmentActiveTasksBinding
+import com.gmail.dkozykowski.utils.setAsVisible
 
-class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
+class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentActiveTasksBinding
-    private val adapter by lazy { TaskAdapter( ALL_ACTIVE, context!!, updateIdlePage, ::showEmptyInfo)}
+    private val adapter by lazy { TaskAdapter( ALL_ACTIVE, context!!, ::showEmptyInfo, updateIdlePage)}
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -55,8 +57,8 @@ class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emptyListIcon.visibility = VISIBLE
-        binding.emptyListText.visibility = VISIBLE
+        binding.emptyListIcon.setAsVisible()
+        binding.emptyListText.setAsVisible()
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, VERTICAL, false)
@@ -74,8 +76,8 @@ class ActiveTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
 
     private fun showEmptyInfo() {
         Handler().postDelayed({
-            binding.emptyListIcon.visibility = VISIBLE
-            binding.emptyListText.visibility = VISIBLE
+            binding.emptyListIcon.setAsVisible()
+            binding.emptyListText.setAsVisible()
         }, 250)
     }
 }

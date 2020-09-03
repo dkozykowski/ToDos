@@ -14,14 +14,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.DONE
 import com.gmail.dkozykowski.databinding.FragmentDoneTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
+import com.gmail.dkozykowski.utils.setAsVisible
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
+class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentDoneTasksBinding
-    private val adapter by lazy { TaskAdapter( DONE, context!!, updateIdlePage, ::showEmptyInfo )}
+    private val adapter by lazy { TaskAdapter( DONE, context!!, ::showEmptyInfo, updateIdlePage)}
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -56,8 +58,8 @@ class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emptyListIcon.visibility = VISIBLE
-        binding.emptyListText.visibility = VISIBLE
+        binding.emptyListIcon.setAsVisible()
+        binding.emptyListText.setAsVisible()
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, VERTICAL, false)
@@ -75,8 +77,8 @@ class DoneTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() 
 
     private fun showEmptyInfo() {
         Handler().postDelayed({
-            binding.emptyListIcon.visibility = VISIBLE
-            binding.emptyListText.visibility = VISIBLE
+            binding.emptyListIcon.setAsVisible()
+            binding.emptyListText.setAsVisible()
         }, 250)
     }
 }

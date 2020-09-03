@@ -14,14 +14,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.TODAYS
 import com.gmail.dkozykowski.databinding.FragmentTodaysTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
+import com.gmail.dkozykowski.utils.setAsHidden
+import com.gmail.dkozykowski.utils.setAsVisible
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class TodaysTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment() {
+class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentTodaysTasksBinding
-    private val adapter by lazy { TaskAdapter(TODAYS, context!!, updateIdlePage, ::showEmptyInfo) }
+    private val adapter by lazy { TaskAdapter(TODAYS, context!!, ::showEmptyInfo, updateIdlePage) }
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -56,8 +59,8 @@ class TodaysTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.emptyListIcon.visibility = GONE
-        binding.emptyListText.visibility = GONE
+        binding.emptyListIcon.setAsHidden()
+        binding.emptyListText.setAsHidden()
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, VERTICAL, false)
@@ -75,8 +78,8 @@ class TodaysTasksFragment(private val updateIdlePage: (Int) -> Unit) : Fragment(
 
     private fun showEmptyInfo() {
         Handler().postDelayed({
-            binding.emptyListIcon.visibility = VISIBLE
-            binding.emptyListText.visibility = VISIBLE
+            binding.emptyListIcon.setAsVisible()
+            binding.emptyListText.setAsVisible()
         }, 250)
     }
 }

@@ -1,10 +1,9 @@
 package com.gmail.dkozykowski.ui.fragment
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -14,16 +13,15 @@ import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentPreviewTaskBinding
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
-import java.util.*
 
 class PreviewTaskFragment : Fragment() {
     private lateinit var binding: FragmentPreviewTaskBinding
-    private lateinit var title: String
-    private lateinit var description: String
+    private lateinit var taskTitle: String
+    private lateinit var taskDescription: String
     private val viewModel = TaskViewModel()
-    private var uid = 0
-    private var date = 0L
-    private var isEditMode = false
+    private var taskId = 0
+    private var taskDate = 0L
+    private var isTaskEditModeOn = false
 
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
@@ -37,33 +35,32 @@ class PreviewTaskFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        isEditMode = false
+        isTaskEditModeOn = false
         loadTask()
         viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_preview_task, container, false)
-        updateMode()
+        setViewToCurrentMode()
         setupDatePicking()
-        setupTimePicking()
         setupSaveButton()
 
-        binding.timeLeft.text = getTimeLeftText(date)
+        binding.timeLeft.text = getTimeLeftText(taskDate)
 
         binding.closePreviewButton.setOnClickListener {
             findNavController().navigateUp()
         }
 
         binding.editButton.setOnClickListener {
-            isEditMode = true
-            updateMode()
+            isTaskEditModeOn = true
+            setViewToCurrentMode()
         }
 
         binding.cancelButton.setOnClickListener {
-            if (areChangesUnsaved()) {
+            if (wasEditTaskSheetEdited()) {
                 showExitDialog()
             } else {
-                isEditMode = false
-                updateMode()
+                isTaskEditModeOn = false
+                setViewToCurrentMode()
             }
         }
 
@@ -83,94 +80,65 @@ class PreviewTaskFragment : Fragment() {
     }
 
     fun onBackPressed() {
-        if (isEditMode) {
-            if (areChangesUnsaved()) {
+        if (isTaskEditModeOn) {
+            if (wasEditTaskSheetEdited()) {
                 showExitDialog()
             } else {
-                isEditMode = false
-                updateMode()
+                isTaskEditModeOn = false
+                setViewToCurrentMode()
             }
         } else findNavController().navigateUp()
     }
 
     private fun setupSaveButton() {
         binding.saveButton.setOnClickListener {
-            title = binding.titleEditText.text.toString()
-            description = binding.descriptionEditText.text.toString()
-            date = stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}")
+            taskTitle = binding.titleEditText.text()
+            taskDescription = binding.descriptionEditText.text()
+            taskDate = dateToTimestamp(binding.dateEditText.text())
 
             if (validateEditTaskSheet()) {
                 binding.saveButton.isClickable = false
-                isEditMode = false
-                updateMode()
-                viewModel.updateTask(uid, title, description, date)
+                isTaskEditModeOn = false
+                setViewToCurrentMode()
+                viewModel.updateTask(taskId, taskTitle, taskDescription, taskDate)
             }
         }
     }
 
     private fun loadTask() {
-        title = arguments?.getString("title")!!
-        description = arguments?.getString("description")!!
-        date = arguments?.getLong("date")!!
-        uid = arguments?.getInt("id")!!
+        taskTitle = arguments?.getString("title")!!
+        taskDescription = arguments?.getString("description")!!
+        taskDate = arguments?.getLong("date")!!
+        taskId = arguments?.getInt("id")!!
     }
 
-    private fun updateMode() {
-
-        updateEditViewProperties(if (isEditMode) View.VISIBLE else View.GONE)
-        updatePreviewViewProperties(if (isEditMode) View.GONE else View.VISIBLE)
-
+    private fun setViewToCurrentMode() {
         with(binding) {
-            if (isEditMode) {
-                titleEditText.setText(title)
-                descriptionEditText.setText(description)
-                dateEditText.setText(getDateFromLong(date))
-                timeEditText.setText(getTimeFromLong(date))
+            if (isTaskEditModeOn) {
+                titleEditText.setText(taskTitle)
+                descriptionEditText.setText(taskDescription)
+                dateEditText.setText(timestampToDate(taskDate))
             } else {
-                titleText.text = title
-                descriptionText.text = description
-                dateAndTimeText.text = getDateAndTimeFromLong(date)
-                timeLeft.text = getTimeLeftText(date)
+                titleText.text = taskTitle
+                descriptionText.text = taskDescription
+                dateText.text = timestampToDate(taskDate)
+                timeLeft.text = getTimeLeftText(taskDate)
             }
+
+            editModeLayout.visibility = if (isTaskEditModeOn) VISIBLE else GONE
+            cancelButton.visibility = if (isTaskEditModeOn) VISIBLE else GONE
+            cancelButtonIcon.visibility = if (isTaskEditModeOn) VISIBLE else GONE
+
+            previewModeLayout.visibility = if (isTaskEditModeOn) GONE else VISIBLE
+            editButton.visibility = if (isTaskEditModeOn) GONE else VISIBLE
+            editButtonIcon.visibility = if (isTaskEditModeOn) GONE else VISIBLE
         }
     }
 
-    private fun updateEditViewProperties(type: Int) {
-        with(binding) {
-            titleInputLayout.visibility = type
-            descriptionInputLayout.visibility = type
-            dateInputLayout.visibility = type
-            timeInputLayout.visibility = type
-            titleEditText.visibility = type
-            descriptionEditText.visibility = type
-            dateEditText.visibility = type
-            timeEditText.visibility = type
-            saveButton.visibility = type
-            cancelButton.visibility = type
-            cancelButtonIcon.visibility = type
-        }
-    }
-
-    private fun updatePreviewViewProperties(type: Int) {
-        with(binding) {
-            titleText.visibility = type
-            titleHeader.visibility = type
-            descriptionText.visibility = type
-            descriptionHeader.visibility = type
-            dateAndTimeText.visibility = type
-            dateAndTimeHeader.visibility = type
-            closePreviewButton.visibility = type
-            editButton.visibility = type
-            editButtonIcon.visibility = type
-            line1.visibility = type
-            line2.visibility = type
-        }
-    }
-
-    private fun areChangesUnsaved(): Boolean {
-        if (binding.titleEditText.text.toString() != title ||
-            binding.descriptionEditText.text.toString() != description ||
-            stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}") != date
+    private fun wasEditTaskSheetEdited(): Boolean {
+        if (binding.titleEditText.text() != taskTitle ||
+            binding.descriptionEditText.text() != taskDescription ||
+            dateToTimestamp(binding.dateEditText.text()) != taskDate
         ) return true
         return false
     }
@@ -179,8 +147,8 @@ class PreviewTaskFragment : Fragment() {
         AlertDialog.Builder(context!!).apply {
             setMessage("Discard changes?")
             setPositiveButton("Yes") { _, _ ->
-                isEditMode = false
-                updateMode()
+                isTaskEditModeOn = false
+                setViewToCurrentMode()
             }
             setNegativeButton("No", null)
         }.show()
@@ -193,24 +161,9 @@ class PreviewTaskFragment : Fragment() {
             openPickDateDialog(context!!, binding.dateEditText)
         }
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && isEditMode) {
+            if (hasFocus && isTaskEditModeOn) {
                 hideKeyboard(context!!, binding.root)
                 binding.dateEditText.callOnClick()
-            }
-        }
-    }
-
-    private fun setupTimePicking() {
-        binding.timeEditText.setOnClickListener {
-            hideKeyboard(context!!, binding.root)
-            binding.timeEditText.error = null
-            openPickTimeDialog(context!!, binding.timeEditText)
-        }
-
-        binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && isEditMode) {
-                hideKeyboard(context!!, binding.root)
-                binding.timeEditText.callOnClick()
             }
         }
     }
@@ -218,23 +171,18 @@ class PreviewTaskFragment : Fragment() {
     private fun validateEditTaskSheet(): Boolean {
         var isPreviewTaskSheetCorrect = true
 
-        if (binding.titleEditText.text.isNullOrBlank()) {
+        if (binding.titleEditText.isTextBlank()) {
             binding.titleEditText.error = "Title cannot be blank!"
             isPreviewTaskSheetCorrect = false
         }
-        if (binding.descriptionEditText.text.isNullOrBlank()) {
+        if (binding.descriptionEditText.isTextBlank()) {
             binding.descriptionEditText.error = "Description cannot be blank!"
             isPreviewTaskSheetCorrect = false
         }
-        if (binding.dateEditText.text.isNullOrBlank()) {
+        if (binding.dateEditText.isTextBlank()) {
             binding.dateEditText.error = "Select the date!"
             isPreviewTaskSheetCorrect = false
         }
-        if (binding.timeEditText.text.isNullOrBlank()) {
-            binding.timeEditText.error = "Select the time!"
-            isPreviewTaskSheetCorrect = false
-        }
-
         return isPreviewTaskSheetCorrect
     }
 }

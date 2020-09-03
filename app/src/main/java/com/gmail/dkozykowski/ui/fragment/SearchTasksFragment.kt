@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
-import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.SEARCH
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentSearchTasksBinding
@@ -26,9 +25,10 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class SearchTasksFragment : Fragment() {
     private lateinit var binding: FragmentSearchTasksBinding
-    private val adapter by lazy { TaskAdapter(SEARCH, context!!, ::emptyFunction, ::showEmptyInfo) }
+    private val adapter by lazy { TaskAdapter(SEARCH, context!!, ::showEmptyInfo) }
     lateinit var viewModel: TaskViewModel
-    private var filtersShown = false
+    private var areFiltersShown = false
+    private val filterSpinnerItems = arrayOf("none", "true", "false")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +36,8 @@ class SearchTasksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding =
-            FragmentSearchTasksBinding.inflate(inflater, container, false)
+        binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
+        
         binding.cancelButton.setOnClickListener { onBackPressed() }
 
         viewModel = ViewModelProvider(
@@ -59,13 +59,13 @@ class SearchTasksFragment : Fragment() {
             }
         })
 
-        val items = arrayOf("none", "true", "false")
+        
 
         binding.doneStatusSpinner.setAdapter(
             ArrayAdapter<String>(
                 context!!,
                 R.layout.dropdown_menu_popup_item,
-                items
+                filterSpinnerItems
             )
         )
         binding.doneStatusSpinner.setText("none", false)
@@ -74,16 +74,16 @@ class SearchTasksFragment : Fragment() {
             ArrayAdapter<String>(
                 context!!,
                 R.layout.dropdown_menu_popup_item,
-                items
+                filterSpinnerItems
             )
         )
         binding.importanceStatusSpinner.setText("none", false)
 
         binding.hideFiltersButton.setOnClickListener {
-            filtersShown = !filtersShown
-            binding.filtersLayout.visibility = if (filtersShown) VISIBLE else GONE
-            binding.hideFiltersButton.animate().rotation(if (filtersShown) 180F else 0F)
-                .setDuration(if (filtersShown) 350 else 600).start()
+            areFiltersShown = !areFiltersShown
+            binding.filtersLayout.visibility = if (areFiltersShown) VISIBLE else GONE
+            binding.hideFiltersButton.animate().rotation(if (areFiltersShown) 180F else 0F)
+                .setDuration(if (areFiltersShown) 350 else 600).start()
         }
 
         binding.importanceStatusSpinner.setOnFocusChangeListener { _, hasFocus ->
@@ -109,7 +109,6 @@ class SearchTasksFragment : Fragment() {
         findNavController().navigateUp()
     }
 
-    private fun emptyFunction(variable : Int) {}
 
     private fun showEmptyInfo() {
         // TODO: 01.09.2020  
@@ -133,5 +132,4 @@ class SearchTasksFragment : Fragment() {
         super.onResume()
         viewModel.loadTasks(SEARCH)
     }
-    
 }

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.navigation.fragment.findNavController
 import com.ToxicBakery.viewpager.transforms.ScaleInOutTransformer
+import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentViewPagerBinding
@@ -65,11 +66,12 @@ class ViewPagerFragment : Fragment() {
         }.show()
     }
 
-    private fun updateIdlePage(position: Int) {
-        when (position) {
-            0 -> (pages[position] as TodaysTasksFragment).viewModel.loadTasks(TODAYS)
-            1 -> (pages[position] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
-            2 -> (pages[position] as DoneTasksFragment).viewModel.loadTasks(DONE)
+    private fun updateIdlePage(fragmentType: QueryTaskType) {
+        when (fragmentType) {
+            TODAYS -> (pages[0] as TodaysTasksFragment).viewModel.loadTasks(TODAYS)
+            ALL_ACTIVE -> (pages[1] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
+            DONE -> (pages[2] as DoneTasksFragment).viewModel.loadTasks(DONE)
+            else -> {}
         }
     }
 }

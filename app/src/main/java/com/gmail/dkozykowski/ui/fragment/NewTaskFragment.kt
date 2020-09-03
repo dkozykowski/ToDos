@@ -1,25 +1,20 @@
 package com.gmail.dkozykowski.ui.fragment
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.FragmentNewTaskBinding
-import com.gmail.dkozykowski.utils.hideKeyboard
-import com.gmail.dkozykowski.utils.openPickDateDialog
-import com.gmail.dkozykowski.utils.openPickTimeDialog
-import com.gmail.dkozykowski.utils.stringToDate
+import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
-import java.util.*
+
 
 class NewTaskFragment : Fragment() {
     private lateinit var binding: FragmentNewTaskBinding
@@ -41,7 +36,6 @@ class NewTaskFragment : Fragment() {
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
 
         setupDatePicking()
-        setupTimePicking()
         setupAddTaskButton()
 
         binding.root.setOnClickListener {
@@ -61,20 +55,16 @@ class NewTaskFragment : Fragment() {
     private fun validateNewTaskSheet(): Boolean {
         var isNewTaskSheetCorrect = true
 
-        if (binding.titleEditText.text.isNullOrBlank()) {
+        if (binding.titleEditText.isTextBlank()) {
             binding.titleEditText.error = "Title cannot be blank!"
             isNewTaskSheetCorrect = false
         }
-        if (binding.descriptionEditText.text.isNullOrBlank()) {
+        if (binding.descriptionEditText.isTextBlank()) {
             binding.descriptionEditText.error = "Description cannot be blank!"
             isNewTaskSheetCorrect = false
         }
-        if (binding.dateEditText.text.isNullOrBlank()) {
+        if (binding.dateEditText.isTextBlank()) {
             binding.dateEditText.error = "Select the date!"
-            isNewTaskSheetCorrect = false
-        }
-        if (binding.timeEditText.text.isNullOrBlank()) {
-            binding.timeEditText.error = "Select the time!"
             isNewTaskSheetCorrect = false
         }
 
@@ -95,20 +85,6 @@ class NewTaskFragment : Fragment() {
         }
     }
 
-    private fun setupTimePicking() {
-        binding.timeEditText.setOnClickListener {
-            hideKeyboard(context!!, binding.root)
-            binding.timeEditText.error = null
-            openPickTimeDialog(context!!, binding.timeEditText)
-        }
-        binding.timeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                hideKeyboard(context!!, binding.root)
-                binding.timeEditText.callOnClick()
-            }
-        }
-    }
-
     private fun setupAddTaskButton() {
         binding.addTaskButton.setOnClickListener {
             try {
@@ -116,9 +92,9 @@ class NewTaskFragment : Fragment() {
                     viewModel.sendTask(
                         Task(
                             0,
-                            binding.titleEditText.text.toString(),
-                            binding.descriptionEditText.text.toString(),
-                            stringToDate("${binding.dateEditText.text} ${binding.timeEditText.text}"),
+                            binding.titleEditText.text(),
+                            binding.descriptionEditText.text(),
+                            dateToTimestamp(binding.dateEditText.text()),
                             important = false,
                             done = false
                         )
@@ -132,9 +108,8 @@ class NewTaskFragment : Fragment() {
 
     fun onBackPressed() {
         with(binding) {
-            if (titleEditText.text.isNullOrBlank() && descriptionEditText.text.isNullOrBlank() &&
-                dateEditText.text.isNullOrBlank() && timeEditText.text.isNullOrBlank()
-            ) findNavController().navigateUp()
+            if (titleEditText.isTextBlank() && descriptionEditText.isTextBlank() &&
+                dateEditText.isTextBlank()) findNavController().navigateUp()
             else showExitDialog()
         }
     }

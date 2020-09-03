@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.recyclerview.widget.RecyclerView
 import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
@@ -18,14 +19,14 @@ import kotlinx.coroutines.withContext
 class TaskAdapter(
     private val queryType: QueryTaskType,
     context: Context,
-    private val updateIdlePageCallback: (Int) -> Unit,
-    private val showEmptyInfo: () -> Unit
+    private val showEmptyInfo: () -> Unit,
+    private val updateIdlePageCallback: ((QueryTaskType) -> Unit)? = null
 ) :
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     class ViewHolder(val postView: ItemListView) : RecyclerView.ViewHolder(postView)
 
     private var data: ArrayList<Task> = ArrayList()
-    private var toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+    private var toast = Toast.makeText(context, "", LENGTH_SHORT)
 
     fun isDataEmpty(): Boolean {
         return (itemCount == 0)
@@ -68,11 +69,11 @@ class TaskAdapter(
                     }
                 }
             }
-            displayTaskChangePresentation(index, task)
+            displayTaskChangedPresentation(index, task)
         })
     }
 
-    private fun displayTaskChangePresentation(index: Int, task: Task) {
+    private fun displayTaskChangedPresentation(index: Int, task: Task) {
         if ((queryType == ALL_ACTIVE && !task.done)
             || (queryType == DONE && task.done)
             || (queryType == TODAYS && !task.done)) {
@@ -96,9 +97,7 @@ class TaskAdapter(
     fun updateData(data: List<Task>) {
         this.data = data as ArrayList<Task>
         sortData()
-        Handler().post {
-            notifyDataSetChanged()
-        }
+        Handler().post { notifyDataSetChanged() }
     }
 
     private fun sortData() {
@@ -111,17 +110,17 @@ class TaskAdapter(
 
     private fun notifyIdleTaskListUpdated(taskParamDone: Boolean) {
         if ((queryType == ALL_ACTIVE && !taskParamDone) || (queryType == DONE && taskParamDone)) {
-                updateIdlePageCallback(0)
+            updateIdlePageCallback!!(TODAYS)
         } else if (queryType != DONE && taskParamDone) {
-            updateIdlePageCallback(2)
+            updateIdlePageCallback!!(DONE)
         } else if (queryType == DONE && !taskParamDone) {
-            updateIdlePageCallback(0)
-            updateIdlePageCallback(1)
+            updateIdlePageCallback!!(DONE)
+            updateIdlePageCallback!!(ALL_ACTIVE)
         } else if (queryType == TODAYS && taskParamDone) {
-            updateIdlePageCallback(1)
-            updateIdlePageCallback(2)
+            updateIdlePageCallback!!(ALL_ACTIVE)
+            updateIdlePageCallback!!(DONE)
         } else if (queryType == TODAYS && !taskParamDone) {
-            updateIdlePageCallback(1)
+            updateIdlePageCallback!!(ALL_ACTIVE)
         }
     }
 }

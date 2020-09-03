@@ -59,8 +59,6 @@
             android:id="@+id/filtersLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:animateLayoutChanges="true"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone"
@@ -72,9 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:animateLayoutChanges="true"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
                 app:startIconCheckable="true"
                 app:startIconDrawable="@drawable/ic_round_title_24">
@@ -99,7 +95,6 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:animateLayoutChanges="true"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
                 app:startIconCheckable="true"
                 app:startIconDrawable="@drawable/ic_round_description_24">
@@ -124,7 +119,6 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:animateLayoutChanges="true"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
@@ -135,7 +129,6 @@
                     android:id="@+id/importanceStatusSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
                     android:backgroundTint="@color/md_white_1000"
                     android:clickable="true"
                     android:editable="false"
@@ -152,8 +145,6 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:animateLayoutChanges="true"
                 android:background="@android:color/transparent"
                 android:hint="Done"
                 app:startIconDrawable="@drawable/ic_outline_check_box_24">
@@ -162,11 +153,68 @@
                     android:id="@+id/doneStatusSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
                     android:backgroundTint="@color/md_white_1000"
                     android:editable="false"
                     android:inputType="none" />
 
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dateInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionInputLayout"
+                app:startIconCheckable="true"
+                app:startIconDrawable="@drawable/ic_calendar_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dateEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:hint="Date"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/timeInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
+                app:startIconCheckable="true"
+                app:startIconDrawable="@drawable/ic_baseline_access_time_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/timeEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:hint="Time"
+                    android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -189,7 +237,6 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            android:animateLayoutChanges="true"
             android:background="@color/md_grey_500"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -200,7 +247,6 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="16dp"
-            android:animateLayoutChanges="true"
             android:background="@color/md_white_1000"
             android:src="@drawable/ic_round_keyboard_arrow_down_24"
             app:layout_constraintBottom_toBottomOf="@+id/line1"
