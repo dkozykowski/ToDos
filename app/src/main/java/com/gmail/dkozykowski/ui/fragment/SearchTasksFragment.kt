@@ -8,6 +8,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +20,7 @@ import com.gmail.dkozykowski.QueryTaskType.SEARCH
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentSearchTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
-import com.gmail.dkozykowski.utils.hideKeyboard
+import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 
@@ -59,25 +60,9 @@ class SearchTasksFragment : Fragment() {
             }
         })
 
-        
-
-        binding.doneStatusSpinner.setAdapter(
-            ArrayAdapter<String>(
-                context!!,
-                R.layout.dropdown_menu_popup_item,
-                filterSpinnerItems
-            )
-        )
         binding.doneStatusSpinner.setText("none", false)
-
-        binding.importanceStatusSpinner.setAdapter(
-            ArrayAdapter<String>(
-                context!!,
-                R.layout.dropdown_menu_popup_item,
-                filterSpinnerItems
-            )
-        )
         binding.importanceStatusSpinner.setText("none", false)
+        setupSpinnersAdapters()
 
         binding.hideFiltersButton.setOnClickListener {
             areFiltersShown = !areFiltersShown
@@ -131,5 +116,43 @@ class SearchTasksFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.loadTasks(SEARCH)
+        setupSpinnersAdapters()
+    }
+
+    fun loadFilteredTask() {
+        with(binding) {
+            viewModel.loadTasks(
+                SEARCH,
+                if (titleEditText.isTextBlank()) "" else titleEditText.text(),
+                if (descriptionEditText.isTextBlank()) "" else descriptionEditText.text(),
+                if (startDateEditText.isTextBlank()) 0 else dateToTimestamp(startDateEditText.text()),
+                if (endDateEditText.isTextBlank()) Long.MAX_VALUE else dateToTimestamp(endDateEditText.text()),
+                importanceStatusSpinner.getParamValueFromSpinner(),
+                doneStatusSpinner.getParamValueFromSpinner()
+            )
+        }
+    }
+
+    private fun AppCompatAutoCompleteTextView.getParamValueFromSpinner(): Boolean?  {
+        if (this.isTextBlank()) return null
+        if (this.text.toString() == "true") return true
+        return false
+    }
+
+    private fun setupSpinnersAdapters() {
+        binding.importanceStatusSpinner.setAdapter(
+            ArrayAdapter<String>(
+                context!!,
+                R.layout.dropdown_menu_popup_item,
+                filterSpinnerItems
+            )
+        )
+        binding.doneStatusSpinner.setAdapter(
+            ArrayAdapter<String>(
+                context!!,
+                R.layout.dropdown_menu_popup_item,
+                filterSpinnerItems
+            )
+        )
     }
 }

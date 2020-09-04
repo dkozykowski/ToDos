@@ -16,7 +16,15 @@ class TaskViewModel : ViewModel() {
     val sendTaskLiveData = MutableLiveData<SendViewState>()
     val updateTaskLiveData = MutableLiveData<UpdateViewState>()
 
-    fun loadTasks(queryType: QueryTaskType) {
+    fun loadTasks(
+        queryType: QueryTaskType,
+        title: String = "",
+        description: String = "",
+        olderThan: Long = 0,
+        newerThan: Long = Long.MAX_VALUE,
+        important: Boolean? = null,
+        done: Boolean? = null
+    ) {
         if (loadTaskLiveData.value == LoadViewState.Loading) return
 
         loadTaskLiveData.postValue(LoadViewState.Loading)
@@ -28,20 +36,16 @@ class TaskViewModel : ViewModel() {
                         TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
                         ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
                         DONE -> DB.db.taskDao().getDoneTasks()
-                        SEARCH -> DB.db.taskDao().getAllActiveTasks()
+                        SEARCH -> DB.db.taskDao().getFilteredTasks(title, description, olderThan, newerThan)
+                    } as ArrayList<Task>
+                    if (queryType == SEARCH) {
+                        if (done != null) tasks.removeAll { task -> task.done != done }
+                        if (important != null) tasks.removeAll { task -> task.important != important }
                     }
-                    loadTaskLiveData.postValue(
-                        LoadViewState.Success(
-                            tasks
-                        )
-                    )
+                    loadTaskLiveData.postValue(LoadViewState.Success(tasks))
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    loadTaskLiveData.postValue(
-                        LoadViewState.Error(
-                            e.message.toString()
-                        )
-                    )
+                    loadTaskLiveData.postValue(LoadViewState.Error(e.message.toString()))
                 }
             }
         }

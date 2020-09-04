@@ -160,7 +160,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dateInputLayout"
+                android:id="@+id/startDateInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -176,20 +176,20 @@
                 app:startIconDrawable="@drawable/ic_calendar_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/dateEditText"
+                    android:id="@+id/startDateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:editable="false"
                     android:focusable="true"
-                    android:hint="Date"
+                    android:hint="Older than"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/timeInputLayout"
+                android:id="@+id/endDateInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -203,17 +203,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
                 app:startIconCheckable="true"
-                app:startIconDrawable="@drawable/ic_baseline_access_time_24">
+                app:startIconDrawable="@drawable/ic_calendar_24">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/timeEditText"
+                    android:id="@+id/endDateEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:clickable="true"
                     android:editable="false"
                     android:focusable="true"
-                    android:hint="Time"
+                    android:hint="Newer than"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -6,6 +6,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
@@ -80,6 +81,10 @@ fun TextInputEditText.text() : String {
 }
 
 fun TextInputEditText.isTextBlank() : Boolean {
+    return this.text.isNullOrBlank()
+}
+
+fun AppCompatAutoCompleteTextView.isTextBlank() : Boolean {
     return this.text.isNullOrBlank()
 }
 
