@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.gmail.dkozykowski.QueryTaskType.SEARCH
-import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentSearchTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.utils.*
@@ -29,7 +28,6 @@ class SearchTasksFragment : Fragment() {
     private val adapter by lazy { TaskAdapter(SEARCH, context!!, ::showEmptyInfo) }
     lateinit var viewModel: TaskViewModel
     private var areFiltersShown = false
-    private val filterSpinnerItems = arrayOf("none", "true", "false")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,10 +58,6 @@ class SearchTasksFragment : Fragment() {
             }
         })
 
-        binding.doneStatusSpinner.setText("none", false)
-        binding.importanceStatusSpinner.setText("none", false)
-        setupSpinnersAdapters()
-
         binding.hideFiltersButton.setOnClickListener {
             areFiltersShown = !areFiltersShown
             binding.filtersLayout.visibility = if (areFiltersShown) VISIBLE else GONE
@@ -71,20 +65,15 @@ class SearchTasksFragment : Fragment() {
                 .setDuration(if (areFiltersShown) 350 else 600).start()
         }
 
-        binding.importanceStatusSpinner.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(context!!, binding.root)
-        }
-
-        binding.doneStatusSpinner.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) hideKeyboard(context!!, binding.root)
-        }
 
         binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
 
         binding.searchButton.setOnClickListener {
             // TODO: Toast x results found
-            viewModel.loadTasks(SEARCH)
+            loadFilteredTask()
         }
+
+        setupDatePicking()
 
         return binding.root
     }
@@ -110,25 +99,22 @@ class SearchTasksFragment : Fragment() {
             addItemDecoration(dividerItemDecoration)
             adapter = this@SearchTasksFragment.adapter
         }
-        viewModel.loadTasks(SEARCH)
+        loadFilteredTask()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(SEARCH)
-        setupSpinnersAdapters()
+        loadFilteredTask()
     }
 
-    fun loadFilteredTask() {
+    private fun loadFilteredTask() {
         with(binding) {
             viewModel.loadTasks(
                 SEARCH,
                 if (titleEditText.isTextBlank()) "" else titleEditText.text(),
                 if (descriptionEditText.isTextBlank()) "" else descriptionEditText.text(),
                 if (startDateEditText.isTextBlank()) 0 else dateToTimestamp(startDateEditText.text()),
-                if (endDateEditText.isTextBlank()) Long.MAX_VALUE else dateToTimestamp(endDateEditText.text()),
-                importanceStatusSpinner.getParamValueFromSpinner(),
-                doneStatusSpinner.getParamValueFromSpinner()
+                if (endDateEditText.isTextBlank()) Long.MAX_VALUE else dateToTimestamp(endDateEditText.text())
             )
         }
     }
@@ -139,20 +125,28 @@ class SearchTasksFragment : Fragment() {
         return false
     }
 
-    private fun setupSpinnersAdapters() {
-        binding.importanceStatusSpinner.setAdapter(
-            ArrayAdapter<String>(
-                context!!,
-                R.layout.dropdown_menu_popup_item,
-                filterSpinnerItems
-            )
-        )
-        binding.doneStatusSpinner.setAdapter(
-            ArrayAdapter<String>(
-                context!!,
-                R.layout.dropdown_menu_popup_item,
-                filterSpinnerItems
-            )
-        )
+    private fun setupDatePicking() {
+        binding.startDateEditText.setOnClickListener {
+            hideKeyboard(context!!, binding.root)
+            binding.startDateEditText.error = null
+            openPickDateDialog(context!!, binding.startDateEditText)
+        }
+        binding.startDateEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                hideKeyboard(context!!, binding.root)
+                binding.startDateEditText.callOnClick()
+            }
+        }
+        binding.endDateEditText.setOnClickListener {
+            hideKeyboard(context!!, binding.root)
+            binding.endDateEditText.error = null
+            openPickDateDialog(context!!, binding.endDateEditText)
+        }
+        binding.endDateEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                hideKeyboard(context!!, binding.root)
+                binding.endDateEditText.callOnClick()
+            }
+        }
     }
 }

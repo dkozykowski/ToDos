@@ -74,7 +74,12 @@ class TaskAdapter(
     }
 
     private fun displayTaskChangedPresentation(index: Int, task: Task) {
-        if ((queryType == ALL_ACTIVE && !task.done)
+        if (queryType == SEARCH) {
+            sortData()
+            Handler().post {
+                notifyItemMoved(index, data.indexOfFirst { it.uid == task.uid })
+            }
+        } else if ((queryType == ALL_ACTIVE && !task.done)
             || (queryType == DONE && task.done)
             || (queryType == TODAYS && !task.done)) {
             sortData()
@@ -102,6 +107,7 @@ class TaskAdapter(
 
     private fun sortData() {
         data.sortWith(compareBy(
+            { it.done },
             { !it.important },
             { it.date },
             { it.uid }
@@ -109,13 +115,13 @@ class TaskAdapter(
     }
 
     private fun notifyIdleTaskListUpdated(taskParamDone: Boolean) {
-        if ((queryType == ALL_ACTIVE && !taskParamDone) || (queryType == DONE && taskParamDone)) {
+        if (queryType == ALL_ACTIVE && !taskParamDone) {
             updateIdlePageCallback!!(TODAYS)
         } else if (queryType != DONE && taskParamDone) {
             updateIdlePageCallback!!(DONE)
         } else if (queryType == DONE && !taskParamDone) {
-            updateIdlePageCallback!!(DONE)
             updateIdlePageCallback!!(ALL_ACTIVE)
+            updateIdlePageCallback!!(TODAYS)
         } else if (queryType == TODAYS && taskParamDone) {
             updateIdlePageCallback!!(ALL_ACTIVE)
             updateIdlePageCallback!!(DONE)

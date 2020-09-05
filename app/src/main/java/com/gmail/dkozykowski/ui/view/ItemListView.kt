@@ -37,8 +37,8 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         binding.date.text = timestampToDate(task.date)
         binding.doneCheckbox.isChecked = task.done
 
-        binding.doneCheckbox.setOnCheckedChangeListener { _, isChecked ->
-            task.done = isChecked
+        binding.doneCheckbox.setOnClickListener {
+            task.done = !task.done
             updateCallback(task)
         }
 
@@ -46,8 +46,8 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
 
         binding.importantTaskCheckbox.setChecked(task.important, animate = false)
 
-        binding.importantTaskCheckbox.setOnCheckStateListener {
-            task.important = it
+        binding.importantTaskCheckbox.setOnCheckStateListener { isChecked ->
+            task.important = isChecked
             updateCallback(task)
         }
 

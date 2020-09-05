@@ -88,33 +88,6 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/timeInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
-            app:startIconCheckable="true"
-            app:startIconDrawable="@drawable/ic_baseline_access_time_24">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/timeEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:clickable="true"
-                android:editable="false"
-                android:focusable="true"
-                android:hint="Time"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
