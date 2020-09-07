@@ -15,20 +15,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
-import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.SEARCH
 import com.gmail.dkozykowski.databinding.FragmentSearchTasksBinding
 import com.gmail.dkozykowski.model.FilterTaskDataModel
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
+import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.AWAITING
+import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.DONE
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class SearchTasksFragment : Fragment() {
     private lateinit var binding: FragmentSearchTasksBinding
     private val adapter by lazy { TaskAdapter(SEARCH, context!!, ::showEmptyInfo) }
-    lateinit var viewModel: TaskViewModel
+    private lateinit var viewModel: TaskViewModel
     private var areFiltersShown = false
     private lateinit var toast : Toast
+    private var searchButtonResultToastState = DONE
+    enum class LoadingState { AWAITING, DONE }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,25 +42,47 @@ class SearchTasksFragment : Fragment() {
             this,
             viewModelFactory { TaskViewModel(SEARCH) }
         ).get(TaskViewModel::class.java)
+        binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
         toast = Toast.makeText(context!!, "", Toast.LENGTH_SHORT)
         setupLoadTaskLiveDataObserver()
-        binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
+        setupButtons()
+        setupDatePicking()
+        return binding.root
+    }
+
+    private fun setupButtons() {
+        setupCancelButton()
+        setupRootOnClickEvent()
+        setupSearchButton()
+        setupUpdateFiltersViewButton()
+    }
+
+    private fun setupCancelButton() {
         binding.cancelButton.setOnClickListener { onBackPressed() }
+    }
+
+    private fun setupRootOnClickEvent() {
         binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
+    }
+
+    private fun setupSearchButton() {
         binding.searchButton.setOnClickListener {
+            searchButtonResultToastState = AWAITING
             loadFilteredTask()
         }
+    }
 
-        binding.hideFiltersButton.setOnClickListener {
+    private fun setupUpdateFiltersViewButton() {
+        binding.updateFiltersViewButton.setOnClickListener {
             areFiltersShown = !areFiltersShown
             binding.filtersLayout.visibility = if (areFiltersShown) VISIBLE else GONE
-            binding.hideFiltersButton.animate().rotation(if (areFiltersShown) 180F else 0F)
-                .setDuration(if (areFiltersShown) 350 else 600).start()
+            animateUpdateFiltersViewButtonRotation()
         }
+    }
 
-        setupDatePicking()
-
-        return binding.root
+    private fun animateUpdateFiltersViewButtonRotation() {
+        binding.updateFiltersViewButton.animate().rotation(if (areFiltersShown) 180F else 0F)
+            .setDuration(if (areFiltersShown) 350 else 600).start()
     }
 
     private fun setupLoadTaskLiveDataObserver() {
@@ -67,7 +92,7 @@ class SearchTasksFragment : Fragment() {
                 is TaskViewModel.LoadViewState.Success -> {
                     adapter.updateData(viewState.data)
                     updateEmptyInfo()
-                    showFoundTasksNumberToast()
+                    showSearchButtonResultAwaitingToast()
                 }
             }
         })
@@ -76,7 +101,6 @@ class SearchTasksFragment : Fragment() {
     private fun showErrorMessageToast(errorMessage: String) {
         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
-
 
     fun onBackPressed() {
         findNavController().navigateUp()
@@ -130,13 +154,14 @@ class SearchTasksFragment : Fragment() {
         }
     }
 
-    private fun AppCompatAutoCompleteTextView.getParamValueFromSpinner(): Boolean? {
-        if (this.isTextBlank()) return null
-        if (this.text.toString() == "true") return true
-        return false
+    private fun showSearchButtonResultAwaitingToast() {
+        if (searchButtonResultToastState == AWAITING) {
+            showResultNumberToast()
+            searchButtonResultToastState = DONE
+        }
     }
 
-    private fun showFoundTasksNumberToast() {
+    private fun showResultNumberToast() {
         when (adapter.itemCount) {
             0 -> toast.setText("No results found")
             1 -> toast.setText("1 result found")
@@ -146,6 +171,11 @@ class SearchTasksFragment : Fragment() {
     }
 
     private fun setupDatePicking() {
+        setupLowerboundDatePicking()
+        setupUpperboundDatePicking()
+    }
+
+    private fun setupLowerboundDatePicking() {
         binding.startDateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.startDateEditText.error = null
@@ -157,6 +187,9 @@ class SearchTasksFragment : Fragment() {
                 binding.startDateEditText.callOnClick()
             }
         }
+    }
+
+    private fun setupUpperboundDatePicking() {
         binding.endDateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
             binding.endDateEditText.error = null
