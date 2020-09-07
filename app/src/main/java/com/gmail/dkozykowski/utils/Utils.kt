@@ -7,6 +7,10 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.gmail.dkozykowski.data.model.Task
+import com.gmail.dkozykowski.model.UpdateTaskDataModel
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
@@ -95,4 +99,15 @@ fun View.setAsVisible() {
 fun View.setAsHidden() {
     this.visibility = View.GONE
 }
+
+fun Task.updateTaskWithData(updateTaskData: UpdateTaskDataModel) {
+    this.title = updateTaskData.title
+    this.description = updateTaskData.description
+    this.date = updateTaskData.date
+}
+
+inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(aClass: Class<T>):T = f() as T
+    }
 

@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.gmail.dkozykowski.QueryTaskType
+import com.gmail.dkozykowski.QueryTaskType.NEW
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.FragmentNewTaskBinding
@@ -18,7 +20,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class NewTaskFragment : Fragment() {
     private lateinit var binding: FragmentNewTaskBinding
-    private val viewModel: TaskViewModel = TaskViewModel()
+    private val viewModel: TaskViewModel = TaskViewModel(NEW)
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             findNavController().navigateUp()

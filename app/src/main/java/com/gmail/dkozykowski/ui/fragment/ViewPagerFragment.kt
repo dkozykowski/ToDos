@@ -68,9 +68,9 @@ class ViewPagerFragment : Fragment() {
 
     private fun updateIdlePage(fragmentType: QueryTaskType) {
         when (fragmentType) {
-            TODAYS -> (pages[0] as TodaysTasksFragment).viewModel.loadTasks(TODAYS)
-            ALL_ACTIVE -> (pages[1] as ActiveTasksFragment).viewModel.loadTasks(ALL_ACTIVE)
-            DONE -> (pages[2] as DoneTasksFragment).viewModel.loadTasks(DONE)
+            TODAYS -> (pages[0] as TodaysTasksFragment).viewModel.loadTasksWithoutFilters()
+            ALL_ACTIVE -> (pages[1] as ActiveTasksFragment).viewModel.loadTasksWithoutFilters()
+            DONE -> (pages[2] as DoneTasksFragment).viewModel.loadTasksWithoutFilters()
             else -> {}
         }
     }

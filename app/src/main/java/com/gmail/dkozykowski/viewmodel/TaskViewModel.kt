@@ -7,37 +7,49 @@ import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
+import com.gmail.dkozykowski.model.FilterTaskDataModel
+import com.gmail.dkozykowski.model.UpdateTaskDataModel
+import com.gmail.dkozykowski.utils.updateTaskWithData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class TaskViewModel : ViewModel() {
+class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
     val loadTaskLiveData = MutableLiveData<LoadViewState>()
     val sendTaskLiveData = MutableLiveData<SendViewState>()
     val updateTaskLiveData = MutableLiveData<UpdateViewState>()
 
-
-
-    fun loadTasks(
-        queryType: QueryTaskType,
-        title: String = "",
-        description: String = "",
-        olderThan: Long = 0,
-        newerThan: Long = Long.MAX_VALUE
-    ) {
+    fun loadTasksWithoutFilters() {
         if (loadTaskLiveData.value == LoadViewState.Loading) return
-
         loadTaskLiveData.postValue(LoadViewState.Loading)
-
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val tasks = when (queryType) {
-                        TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
-                        ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
-                        DONE -> DB.db.taskDao().getDoneTasks()
-                        SEARCH -> DB.db.taskDao().getFilteredTasks(title, description, olderThan, newerThan)
-                    }
+                    loadTaskLiveData.postValue(LoadViewState.Success(getTaskFromDatabase()))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    loadTaskLiveData.postValue(LoadViewState.Error(e.message.toString()))
+                }
+            }
+        }
+    }
+
+    private fun getTaskFromDatabase(): List<Task> {
+        return when (queryType) {
+            TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
+            ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
+            DONE -> DB.db.taskDao().getDoneTasks()
+            else -> ArrayList<Task>()
+        }
+    }
+
+    fun loadTasksWithFilters(filterTaskData: FilterTaskDataModel) {
+        if (loadTaskLiveData.value == LoadViewState.Loading) return
+        loadTaskLiveData.postValue(LoadViewState.Loading)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val tasks = getFilteredTaskSFromDatabase(filterTaskData)
                     loadTaskLiveData.postValue(LoadViewState.Success(tasks))
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -47,11 +59,15 @@ class TaskViewModel : ViewModel() {
         }
     }
 
+    private fun getFilteredTaskSFromDatabase(filterTaskData: FilterTaskDataModel): List<Task> {
+        with(filterTaskData) {
+            return DB.db.taskDao().getFilteredTasks(title, description, timeLowerBound, timeUpperBound)
+        }
+    }
+
     fun sendTask(task: Task) {
         if (sendTaskLiveData.value is SendViewState.Loading) return
-
         sendTaskLiveData.postValue(SendViewState.Loading)
-
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -59,42 +75,32 @@ class TaskViewModel : ViewModel() {
                     sendTaskLiveData.postValue(SendViewState.Success)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    sendTaskLiveData.postValue(
-                        SendViewState.Error(
-                            e.message.toString()
-                        )
-                    )
+                    sendTaskLiveData.postValue(SendViewState.Error(e.message.toString()))
                 }
             }
         }
     }
 
-    fun updateTask(id: Int, title: String, description: String, date: Long) {
+    fun updateTask(updateTaskData: UpdateTaskDataModel) {
         if (updateTaskLiveData.value is UpdateViewState.Loading) return
-
         updateTaskLiveData.postValue(UpdateViewState.Loading)
-
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val taskDao = DB.db.taskDao()
-                    var task = taskDao.getTaskById(id)
-
-                    if (task.title != title || task.description != description || task.date != date) {
-                        task.title = title
-                        task.description = description
-                        task.date = date
-                        taskDao.updateTask(task)
-                    }
-
-                    updateTaskLiveData.postValue(UpdateViewState.Success)
+                    getTaskFromDatabaseAndUpdate(updateTaskData)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     updateTaskLiveData.postValue(UpdateViewState.Error(e.message.toString()))
-                    return@withContext
                 }
             }
         }
+    }
+
+    private fun getTaskFromDatabaseAndUpdate(updateTaskData: UpdateTaskDataModel) {
+        val taskToUpdate = DB.db.taskDao().getTaskById(updateTaskData.id)
+        taskToUpdate.updateTaskWithData(updateTaskData)
+        DB.db.taskDao().updateTask(taskToUpdate)
+        updateTaskLiveData.postValue(UpdateViewState.Success)
     }
 
     sealed class LoadViewState {

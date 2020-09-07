@@ -18,13 +18,13 @@ import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.TODAYS
 import com.gmail.dkozykowski.databinding.FragmentTodaysTasksBinding
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
-import com.gmail.dkozykowski.utils.setAsHidden
 import com.gmail.dkozykowski.utils.setAsVisible
+import com.gmail.dkozykowski.utils.viewModelFactory
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentTodaysTasksBinding
-    private val adapter by lazy { TaskAdapter(TODAYS, context!!, ::showEmptyInfo, updateIdlePage) }
+    private val adapter by lazy { TaskAdapter(TODAYS, context!!, ::showEmptyInfo, updateIdlePage)}
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -35,32 +35,42 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
         binding = FragmentTodaysTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.NewInstanceFactory()
+            viewModelFactory { TaskViewModel(TODAYS) }
         ).get(TaskViewModel::class.java)
+        setupLoadTaskLiveDataObserver()
+        return binding.root
+    }
 
+    private fun setupLoadTaskLiveDataObserver() {
         viewModel.loadTaskLiveData.observe(viewLifecycleOwner, Observer { viewState ->
             when (viewState) {
-                is TaskViewModel.LoadViewState.Error -> Toast.makeText(
-                    context,
-                    viewState.errorMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
+                is TaskViewModel.LoadViewState.Error -> showErrorMessageToast(viewState.errorMessage)
                 is TaskViewModel.LoadViewState.Success -> {
                     adapter.updateData(viewState.data)
-                    binding.emptyListText.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
-                    binding.emptyListIcon.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
+                    updateEmptyInfo()
                 }
             }
         })
+    }
 
-        return binding.root
+    private fun showErrorMessageToast(errorMessage: String) {
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateEmptyInfo() {
+        binding.emptyListText.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
+        binding.emptyListIcon.visibility = if (adapter.isDataEmpty()) VISIBLE else GONE
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.emptyListIcon.setAsVisible()
+        binding.emptyListText.setAsVisible()
+        setupRecyclerView()
+        viewModel.loadTasksWithoutFilters()
+    }
 
-        binding.emptyListIcon.setAsHidden()
-        binding.emptyListText.setAsHidden()
+    private fun setupRecyclerView() {
         binding.recyclerView.run {
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context, VERTICAL, false)
@@ -68,12 +78,11 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
             addItemDecoration(dividerItemDecoration)
             adapter = this@TodaysTasksFragment.adapter
         }
-        viewModel.loadTasks(TODAYS)
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadTasks(TODAYS)
+        viewModel.loadTasksWithoutFilters()
     }
 
     private fun showEmptyInfo() {

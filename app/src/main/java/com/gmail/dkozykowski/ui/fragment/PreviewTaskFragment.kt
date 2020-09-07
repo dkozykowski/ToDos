@@ -3,14 +3,17 @@ package com.gmail.dkozykowski.ui.fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.gmail.dkozykowski.QueryTaskType.PREVIEW
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentPreviewTaskBinding
+import com.gmail.dkozykowski.model.UpdateTaskDataModel
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
@@ -18,7 +21,7 @@ class PreviewTaskFragment : Fragment() {
     private lateinit var binding: FragmentPreviewTaskBinding
     private lateinit var taskTitle: String
     private lateinit var taskDescription: String
-    private val viewModel = TaskViewModel()
+    private val viewModel = TaskViewModel(PREVIEW)
     private var taskId = 0
     private var taskDate = 0L
     private var isTaskEditModeOn = false
@@ -34,27 +37,22 @@ class PreviewTaskFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         isTaskEditModeOn = false
         loadTask()
         viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_preview_task, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_preview_task, container, false)
         setViewToCurrentMode()
         setupDatePicking()
         setupSaveButton()
-
         binding.timeLeft.text = getTimeLeftText(taskDate)
-
         binding.closePreviewButton.setOnClickListener {
             findNavController().navigateUp()
         }
-
         binding.editButton.setOnClickListener {
             isTaskEditModeOn = true
             setViewToCurrentMode()
         }
-
         binding.cancelButton.setOnClickListener {
             if (wasEditTaskSheetEdited()) {
                 showExitDialog()
@@ -100,7 +98,9 @@ class PreviewTaskFragment : Fragment() {
                 binding.saveButton.isClickable = false
                 isTaskEditModeOn = false
                 setViewToCurrentMode()
-                viewModel.updateTask(taskId, taskTitle, taskDescription, taskDate)
+                val updateTaskData =
+                    UpdateTaskDataModel(taskId, taskTitle, taskDescription, taskDate)
+                viewModel.updateTask(updateTaskData)
             }
         }
     }
