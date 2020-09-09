@@ -26,7 +26,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class SearchTasksFragment : Fragment() {
     private lateinit var binding: FragmentSearchTasksBinding
-    private val adapter by lazy { TaskAdapter(SEARCH, context!!, ::showEmptyInfo) }
+    private val adapter by lazy { TaskAdapter(SEARCH, ::showEmptyInfo) }
     private lateinit var viewModel: TaskViewModel
     private var areFiltersShown = false
     private lateinit var toast : Toast
@@ -44,6 +44,7 @@ class SearchTasksFragment : Fragment() {
         ).get(TaskViewModel::class.java)
         binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
         toast = Toast.makeText(context!!, "", Toast.LENGTH_SHORT)
+        adapter.toast = toast
         setupLoadTaskLiveDataObserver()
         setupButtons()
         setupDatePicking()

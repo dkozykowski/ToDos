@@ -24,7 +24,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentTodaysTasksBinding
-    private val adapter by lazy { TaskAdapter(TODAYS, context!!, ::showEmptyInfo, updateIdlePage)}
+    private val adapter by lazy { TaskAdapter(TODAYS, ::showEmptyInfo, updateIdlePage)}
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -34,9 +34,10 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
     ): View? {
         binding = FragmentTodaysTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(
-            this,
-            viewModelFactory { TaskViewModel(TODAYS) }
+                this,
+        viewModelFactory { TaskViewModel(TODAYS) }
         ).get(TaskViewModel::class.java)
+        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
         setupLoadTaskLiveDataObserver()
         return binding.root
     }

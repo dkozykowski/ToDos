@@ -36,7 +36,7 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
 
     private fun getTaskFromDatabase(): List<Task> {
         return when (queryType) {
-            TODAYS -> DB.db.taskDao().getTodaysActiveTasks()
+            TODAYS -> DB.db.taskDao().getTodaysTasks()
             ALL_ACTIVE -> DB.db.taskDao().getAllActiveTasks()
             DONE -> DB.db.taskDao().getDoneTasks()
             else -> ArrayList<Task>()

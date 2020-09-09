@@ -81,6 +81,7 @@
                     android:layout_height="60dp"
                     android:background="@android:color/transparent"
                     android:hint="Title"
+                    android:maxLength="20"
                     android:inputType="textFilter|textMultiLine|textNoSuggestions"
                     android:maxLines="1"
                     android:textColorHint="@color/md_grey_700" />
@@ -106,7 +107,8 @@
                     android:background="@android:color/transparent"
                     android:hint="Description"
                     android:inputType="textFilter|textMultiLine|textNoSuggestions"
-                    android:maxLines="1"
+                    android:maxLines="2"
+                    android:maxLength="40"
                     android:textColorHint="@color/md_grey_700" />
 
             </com.google.android.material.textfield.TextInputLayout>

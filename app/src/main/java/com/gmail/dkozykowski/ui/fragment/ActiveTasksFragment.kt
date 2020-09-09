@@ -24,7 +24,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentActiveTasksBinding
-    private val adapter by lazy { TaskAdapter(ALL_ACTIVE, context!!, ::showEmptyInfo, updateIdlePage)}
+    private val adapter by lazy { TaskAdapter(ALL_ACTIVE, ::showEmptyInfo, updateIdlePage) }
     lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
@@ -37,6 +37,7 @@ class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
             this,
             viewModelFactory { TaskViewModel(ALL_ACTIVE) }
         ).get(TaskViewModel::class.java)
+        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
         setupLoadTaskLiveDataObserver()
         return binding.root
     }

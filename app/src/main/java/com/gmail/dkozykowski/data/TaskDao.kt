@@ -11,8 +11,8 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE done ")
     fun getDoneTasks(): List<Task>
 
-    @Query("SELECT * FROM task WHERE date(datetime(date / 1000, 'unixepoch')) = date('now') AND not done")
-    fun getTodaysActiveTasks(): List<Task>
+    @Query("SELECT * FROM task WHERE date(datetime(date / 1000, 'unixepoch')) = date('now')")
+    fun getTodaysTasks(): List<Task>
 
     @Query("SELECT * FROM task WHERE instr(lower(title), lower(:title)) > 0 AND " +
             "instr(lower(description), lower(:description)) > 0 AND date > :olderThan AND date < :newerThan")

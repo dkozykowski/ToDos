@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.gmail.dkozykowski.QueryTaskType
 import com.gmail.dkozykowski.QueryTaskType.NEW
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
@@ -34,18 +33,11 @@ class NewTaskFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
-
         viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
-
         setupDatePicking()
         setupAddTaskButton()
-
-        binding.root.setOnClickListener {
-            hideKeyboard(context!!, binding.root)
-        }
-
+        binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
         binding.cancelButton.setOnClickListener { onBackPressed() }
-
         return binding.root
     }
 
@@ -55,22 +47,40 @@ class NewTaskFragment : Fragment() {
     }
 
     private fun validateNewTaskSheet(): Boolean {
-        var isNewTaskSheetCorrect = true
+        val titleIsValid = validateTitle()
+        val descriptionIsValid = validateDescription()
+        val dateIsValid = validateDate()
+        return (titleIsValid && descriptionIsValid && dateIsValid)
+    }
 
-        if (binding.titleEditText.isTextBlank()) {
-            binding.titleEditText.error = "Title cannot be blank!"
-            isNewTaskSheetCorrect = false
+    private fun validateTitle(): Boolean {
+        return when {
+            binding.titleEditText.isTextBlank() -> {
+                binding.titleEditText.error = "Title cannot be blank!"
+                false
+            }
+            else -> true
         }
-        if (binding.descriptionEditText.isTextBlank()) {
-            binding.descriptionEditText.error = "Description cannot be blank!"
-            isNewTaskSheetCorrect = false
-        }
-        if (binding.dateEditText.isTextBlank()) {
-            binding.dateEditText.error = "Select the date!"
-            isNewTaskSheetCorrect = false
-        }
+    }
 
-        return isNewTaskSheetCorrect
+    private fun validateDescription(): Boolean {
+        return when {
+            binding.descriptionEditText.isTextBlank() -> {
+                binding.descriptionEditText.error = "Title cannot be blank!"
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun validateDate(): Boolean {
+        return when {
+            binding.dateEditText.isTextBlank() -> {
+                binding.dateEditText.error = "Select the date!"
+                false
+            }
+            else -> true
+        }
     }
 
     private fun setupDatePicking() {
@@ -90,22 +100,29 @@ class NewTaskFragment : Fragment() {
     private fun setupAddTaskButton() {
         binding.addTaskButton.setOnClickListener {
             try {
-                if (validateNewTaskSheet()) {
-                    viewModel.sendTask(
-                        Task(
-                            0,
-                            binding.titleEditText.text(),
-                            binding.descriptionEditText.text(),
-                            dateToTimestamp(binding.dateEditText.text()),
-                            important = false,
-                            done = false
-                        )
-                    )
-                }
+                sendTaskIfValid()
             } catch (e: Exception) {
                 Toast.makeText(context!!, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun sendTaskIfValid() {
+        if (validateNewTaskSheet()) {
+            val task = getTaskFromSheet()
+            viewModel.sendTask(task)
+        }
+    }
+
+    private fun getTaskFromSheet(): Task {
+        return Task(
+            0,
+            binding.titleEditText.text(),
+            binding.descriptionEditText.text(),
+            dateToTimestamp(binding.dateEditText.text()),
+            important = false,
+            done = false
+        )
     }
 
     fun onBackPressed() {

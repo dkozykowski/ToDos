@@ -29,28 +29,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val nav = findNavController(R.id.nav_host_fragment)
-        val currentDest = nav.currentDestination
         val navHostFragment: NavHostFragment? =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val fragment = navHostFragment!!.childFragmentManager.fragments[0]
 
-        when (currentDest?.id) {
-            R.id.viewPagerFragment -> {
-                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as ViewPagerFragment
-                fragment.onBackPressed()
-            }
-            R.id.previewTaskFragment -> {
-                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as PreviewTaskFragment
-                fragment.onBackPressed()
-            }
-            R.id.newTaskFragment -> {
-                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as NewTaskFragment
-                fragment.onBackPressed()
-            }
-            R.id.searchTasksFragment -> {
-                val fragment = navHostFragment!!.childFragmentManager.fragments[0] as SearchTasksFragment
-                fragment.onBackPressed()
-            }
+        when(fragment) {
+            is PreviewTaskFragment -> fragment.onBackPressed()
+            is NewTaskFragment -> fragment.onBackPressed()
+            is SearchTasksFragment -> fragment.onBackPressed()
         }
     }
 }
