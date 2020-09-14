@@ -33,13 +33,21 @@ class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentActiveTasksBinding.inflate(inflater, container, false)
+        setupViewModel()
+        setupToast()
+        setupLoadTaskLiveDataObserver()
+        return binding.root
+    }
+
+    private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(ALL_ACTIVE) }
         ).get(TaskViewModel::class.java)
+    }
+
+    private fun setupToast() {
         adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        setupLoadTaskLiveDataObserver()
-        return binding.root
     }
 
     private fun setupLoadTaskLiveDataObserver() {

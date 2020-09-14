@@ -33,13 +33,21 @@ class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : F
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentDoneTasksBinding.inflate(inflater, container, false)
+        setupViewModel()
+        setupToast()
+        setupLoadTaskLiveDataObserver()
+        return binding.root
+    }
+
+    private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(DONE) }
         ).get(TaskViewModel::class.java)
+    }
+
+    private fun setupToast() {
         adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
-        setupLoadTaskLiveDataObserver()
-        return binding.root
     }
 
     private fun setupLoadTaskLiveDataObserver() {

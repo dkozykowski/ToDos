@@ -16,7 +16,6 @@ import com.gmail.dkozykowski.databinding.FragmentPreviewTaskBinding
 import com.gmail.dkozykowski.model.UpdateTaskDataModel
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
-import kotlinx.android.synthetic.main.fragment_preview_task.*
 
 class PreviewTaskFragment : Fragment() {
     private lateinit var binding: FragmentPreviewTaskBinding
@@ -26,11 +25,14 @@ class PreviewTaskFragment : Fragment() {
     private var taskId = 0
     private var taskDate = 0L
     private var isTaskEditModeOn = false
-
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
             binding.saveButton.isClickable = true
         }
+    }
+
+    init {
+        isTaskEditModeOn = false
     }
 
     override fun onCreateView(
@@ -38,7 +40,6 @@ class PreviewTaskFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        isTaskEditModeOn = false
         loadTask()
         viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
         binding =
@@ -59,7 +60,7 @@ class PreviewTaskFragment : Fragment() {
     }
 
     private fun setViewToCurrentMode() {
-        when(isTaskEditModeOn) {
+        when (isTaskEditModeOn) {
             true -> setViewToEditMode()
             false -> setViewToPreviewMode()
         }
@@ -193,7 +194,6 @@ class PreviewTaskFragment : Fragment() {
     }
 
 
-
     private fun wasEditTaskSheetEdited(): Boolean {
         if (binding.titleEditText.text() != taskTitle ||
             binding.descriptionEditText.text() != taskDescription ||
@@ -212,7 +212,6 @@ class PreviewTaskFragment : Fragment() {
             setNegativeButton("No", null)
         }.show()
     }
-
 
 
     private fun validateEditTaskSheet(): Boolean {

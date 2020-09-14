@@ -38,17 +38,29 @@ class SearchTasksFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
+        loadSetupFunctions()
+        return binding.root
+    }
+
+    private fun loadSetupFunctions() {
+        setupToast()
+        setupViewModel()
+        setupLoadTaskLiveDataObserver()
+        setupButtons()
+        setupDatePicking()
+    }
+
+    private fun setupToast() {
+        toast = Toast.makeText(context!!, "", Toast.LENGTH_SHORT)
+        adapter.toast = toast
+    }
+
+    private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(SEARCH) }
         ).get(TaskViewModel::class.java)
-        binding = FragmentSearchTasksBinding.inflate(inflater, container, false)
-        toast = Toast.makeText(context!!, "", Toast.LENGTH_SHORT)
-        adapter.toast = toast
-        setupLoadTaskLiveDataObserver()
-        setupButtons()
-        setupDatePicking()
-        return binding.root
     }
 
     private fun setupButtons() {

@@ -163,18 +163,36 @@ class TaskAdapter(
     }
 
     private fun notifyIdleTaskListUpdated(taskMarkedAsDone: Boolean) {
-        if (queryType == ALL_ACTIVE && !taskMarkedAsDone) {
-            updateIdlePageCallback!!(TODAYS)
-        } else if (queryType != DONE && taskMarkedAsDone) {
-            updateIdlePageCallback!!(DONE)
-        } else if (queryType == DONE && !taskMarkedAsDone) {
-            updateIdlePageCallback!!(ALL_ACTIVE)
-            updateIdlePageCallback!!(TODAYS)
-        } else if (queryType == TODAYS && taskMarkedAsDone) {
-            updateIdlePageCallback!!(ALL_ACTIVE)
-            updateIdlePageCallback!!(DONE)
-        } else if (queryType == TODAYS && !taskMarkedAsDone) {
-            updateIdlePageCallback!!(ALL_ACTIVE)
+        when (queryType) {
+            TODAYS -> notifyIdleTaskListsFromTodaysList()
+            ALL_ACTIVE -> notifyIdleTaskListsFromActiveList(taskMarkedAsDone)
+            DONE -> notifyIdleTaskListsFromDoneList(taskMarkedAsDone)
+            else -> {}
+        }
+    }
+
+    private fun notifyIdleTaskListsFromTodaysList() {
+        updateIdlePageCallback!!(ALL_ACTIVE)
+        updateIdlePageCallback!!(DONE)
+    }
+
+    private fun notifyIdleTaskListsFromActiveList(taskMarkedAsDone: Boolean) {
+        when (taskMarkedAsDone) {
+            true -> {
+                updateIdlePageCallback!!(TODAYS)
+                updateIdlePageCallback!!(DONE)
+            }
+            false -> updateIdlePageCallback!!(TODAYS)
+        }
+    }
+
+    private fun notifyIdleTaskListsFromDoneList(taskMarkedAsDone: Boolean) {
+        when (taskMarkedAsDone) {
+            true -> updateIdlePageCallback!!(TODAYS)
+            false -> {
+                updateIdlePageCallback!!(TODAYS)
+                updateIdlePageCallback!!(ALL_ACTIVE)
+            }
         }
     }
 }

@@ -1,11 +1,19 @@
 package com.gmail.dkozykowski.ui.activity
 
+import com.gmail.dkozykowski.utils.AlarmReceiver
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.DB
@@ -13,19 +21,36 @@ import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.ui.fragment.NewTaskFragment
 import com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment
 import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment
-import com.gmail.dkozykowski.ui.fragment.ViewPagerFragment
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
+    init {
+        createNotificationChannel()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DB.createDatabase(this)
 
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = R.string.channel_name.toString()
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channelID = R.string.channel_id.toString()
+            val channel = NotificationChannel(channelID, name, importance)
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     override fun onBackPressed() {

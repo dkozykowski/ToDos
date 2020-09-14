@@ -33,13 +33,21 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTodaysTasksBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(
-                this,
-        viewModelFactory { TaskViewModel(TODAYS) }
-        ).get(TaskViewModel::class.java)
-        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+        setupViewModel()
+        setupToast()
         setupLoadTaskLiveDataObserver()
         return binding.root
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            viewModelFactory { TaskViewModel(TODAYS) }
+        ).get(TaskViewModel::class.java)
+    }
+
+    private fun setupToast() {
+        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
     }
 
     private fun setupLoadTaskLiveDataObserver() {

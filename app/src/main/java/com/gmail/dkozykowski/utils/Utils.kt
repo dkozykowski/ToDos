@@ -1,11 +1,12 @@
 package com.gmail.dkozykowski.utils
 
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -110,4 +111,18 @@ inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(aClass: Class<T>):T = f() as T
     }
+
+fun createTaskNotification(task: Task, context: Context) {
+    val intent = Intent(context, AlarmReceiver::class.java)
+    intent.putExtra("title", task.title)
+    intent.putExtra("description", task.description)
+    intent.putExtra("id", task.uid)
+    val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, task.date, pendingIntent)
+    else
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.date, pendingIntent)
+}
 
