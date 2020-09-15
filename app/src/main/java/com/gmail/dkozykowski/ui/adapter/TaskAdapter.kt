@@ -47,6 +47,7 @@ class TaskAdapter(
 
     private fun deleteTaskAtPosition(position: Int) {
         removeTaskFromDatabase(data[position])
+        notifyIdleTaskListUpdated(data[position].done)
         data.removeAt(position)
         displayTaskRemovedPresentation(position)
     }
