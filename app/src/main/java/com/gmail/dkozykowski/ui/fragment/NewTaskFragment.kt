@@ -38,6 +38,7 @@ class NewTaskFragment : Fragment() {
         setupAddTaskButton()
         binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
         binding.cancelButton.setOnClickListener { onBackPressed() }
+        binding.removeDateButton.setOnClickListener { binding.dateEditText.text = null }
         return binding.root
     }
 
@@ -49,8 +50,7 @@ class NewTaskFragment : Fragment() {
     private fun validateNewTaskSheet(): Boolean {
         val titleIsValid = validateTitle()
         val descriptionIsValid = validateDescription()
-        val dateIsValid = validateDate()
-        return (titleIsValid && descriptionIsValid && dateIsValid)
+        return (titleIsValid && descriptionIsValid)
     }
 
     private fun validateTitle(): Boolean {
@@ -67,16 +67,6 @@ class NewTaskFragment : Fragment() {
         return when {
             binding.descriptionEditText.isTextBlank() -> {
                 binding.descriptionEditText.error = "Title cannot be blank!"
-                false
-            }
-            else -> true
-        }
-    }
-
-    private fun validateDate(): Boolean {
-        return when {
-            binding.dateEditText.isTextBlank() -> {
-                binding.dateEditText.error = "Select the date!"
                 false
             }
             else -> true
@@ -111,6 +101,13 @@ class NewTaskFragment : Fragment() {
         if (validateNewTaskSheet()) {
             val task = getTaskFromSheet()
             viewModel.sendTask(task)
+            //createReminderNotificationIfTimeSet(task) todo
+        }
+    }
+
+    private fun createReminderNotificationIfTimeSet(task: Task) {
+        if (task.date != null) {
+            createTaskNotification(task, context!!)
         }
     }
 
@@ -119,9 +116,12 @@ class NewTaskFragment : Fragment() {
             0,
             binding.titleEditText.text(),
             binding.descriptionEditText.text(),
-            dateToTimestamp(binding.dateEditText.text()),
-            important = false,
-            done = false
+            when (binding.dateEditText.text.isNullOrBlank()) {
+                true -> null
+                false -> dateToTimestamp(binding.dateEditText.text())
+            },
+            false,
+            false
         )
     }
 

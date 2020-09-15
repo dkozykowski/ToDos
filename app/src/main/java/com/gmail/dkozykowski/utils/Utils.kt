@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -21,10 +20,16 @@ fun dateToTimestamp(dateString: String): Long {
 }
 
 
+fun timestampToDateWithDayName(time: Long): String {
+    val date = Date(time)
+    val formatter = SimpleDateFormat("dd.MM.yyyy (E) HH:mm", Locale.UK)
+    return formatter.format(date)
+}
+
 fun timestampToDate(time: Long): String {
     val date = Date(time)
-    val format = SimpleDateFormat("dd.MM.yyyy HH:mm")
-    return format.format(date)
+    val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.UK)
+    return formatter.format(date)
 }
 
 fun hideKeyboard(context: Context, view: View) {
@@ -121,8 +126,8 @@ fun createTaskNotification(task: Task, context: Context) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, task.date, pendingIntent)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, task.date!!, pendingIntent)
     else
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.date, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.date!!, pendingIntent)
 }
 

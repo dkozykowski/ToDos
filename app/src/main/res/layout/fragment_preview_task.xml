@@ -114,6 +114,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/removeDateButton"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                android:backgroundTint="@android:color/transparent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/dateInputLayout"
+                app:layout_constraintEnd_toEndOf="@id/dateInputLayout"
+                app:layout_constraintTop_toTopOf="@id/dateInputLayout" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/RemoveDateButtonIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:src="@drawable/ic_round_close_24"
+                app:layout_constraintBottom_toBottomOf="@id/removeDateButton"
+                app:layout_constraintEnd_toEndOf="@id/removeDateButton"
+                app:layout_constraintStart_toStartOf="@id/removeDateButton"
+                app:layout_constraintTop_toTopOf="@id/removeDateButton" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -292,14 +316,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            android:src="@drawable/ic_round_close_24"
+            android:src="@drawable/ic_return"
             android:tint="@color/md_white_1000"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/cancelButton"
             app:layout_constraintEnd_toEndOf="@id/cancelButton"
             app:layout_constraintStart_toStartOf="@id/cancelButton"
             app:layout_constraintTop_toTopOf="@id/cancelButton" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

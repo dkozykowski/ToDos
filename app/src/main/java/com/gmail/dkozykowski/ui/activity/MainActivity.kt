@@ -1,15 +1,10 @@
 package com.gmail.dkozykowski.ui.activity
 
-import com.gmail.dkozykowski.utils.AlarmReceiver
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -21,19 +16,15 @@ import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.ui.fragment.NewTaskFragment
 import com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment
 import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
 
-    init {
-        createNotificationChannel()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel()
         DB.createDatabase(this)
 
 
@@ -43,9 +34,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = R.string.channel_name.toString()
+            val name = getString(R.string.channel_name)
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channelID = R.string.channel_id.toString()
+            val channelID = getString(R.string.channel_id)
             val channel = NotificationChannel(channelID, name, importance)
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -56,9 +47,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val navHostFragment: NavHostFragment? =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val fragment = navHostFragment!!.childFragmentManager.fragments[0]
 
-        when(fragment) {
+        when (val fragment = navHostFragment!!.childFragmentManager.fragments[0]) {
             is PreviewTaskFragment -> fragment.onBackPressed()
             is NewTaskFragment -> fragment.onBackPressed()
             is SearchTasksFragment -> fragment.onBackPressed()

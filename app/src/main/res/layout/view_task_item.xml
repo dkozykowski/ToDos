@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,24 +60,12 @@
             android:drawablePadding="10dp"
             android:ellipsize="end"
             android:text="Date"
+            android:lineSpacingExtra="6dp"
             android:textColor="@color/md_grey_700"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/timeLeft"
+            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckboxLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/description" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/timeLeft"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:ellipsize="end"
-            android:text="(0 min left)"
-            android:textColor="@color/md_grey_700"
-            app:layout_constraintBottom_toBottomOf="@id/date"
-            app:layout_constraintEnd_toStartOf="@+id/importantTaskCheckboxLayout"
-            app:layout_constraintStart_toEndOf="@id/date"
-            app:layout_constraintTop_toTopOf="@id/date" />
 
         <LinearLayout
             android:id="@+id/importantTaskCheckboxLayout"

@@ -1,6 +1,7 @@
 package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -23,7 +24,7 @@ class PreviewTaskFragment : Fragment() {
     private lateinit var taskDescription: String
     private val viewModel = TaskViewModel(PREVIEW)
     private var taskId = 0
-    private var taskDate = 0L
+    private var taskDate: Long? = null
     private var isTaskEditModeOn = false
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
@@ -57,6 +58,7 @@ class PreviewTaskFragment : Fragment() {
         setupEditButton()
         setupCancelButton()
         setupRootOnClickEvent()
+        setupRemoveDateButton()
     }
 
     private fun setViewToCurrentMode() {
@@ -70,7 +72,7 @@ class PreviewTaskFragment : Fragment() {
         with(binding) {
             titleEditText.setText(taskTitle)
             descriptionEditText.setText(taskDescription)
-            dateEditText.setText(timestampToDate(taskDate))
+            if(taskDate != null) dateEditText.setText(timestampToDate(taskDate!!))
 
             editModeLayout.visibility = VISIBLE
             cancelButton.visibility = VISIBLE
@@ -86,8 +88,14 @@ class PreviewTaskFragment : Fragment() {
         with(binding) {
             titleText.text = taskTitle
             descriptionText.text = taskDescription
-            dateText.text = timestampToDate(taskDate)
-            timeLeft.text = getTimeLeftText(taskDate)
+            dateText.text = when (taskDate) {
+                null -> "Date was not set"
+                else -> timestampToDate(taskDate!!)
+            }
+            timeLeft.text = when (taskDate) {
+                null -> null
+                else -> getTimeLeftText(taskDate!!)
+            }
 
             editModeLayout.visibility = GONE
             cancelButton.visibility = GONE
@@ -102,7 +110,6 @@ class PreviewTaskFragment : Fragment() {
     private fun setupDatePicking() {
         binding.dateEditText.setOnClickListener {
             hideKeyboard(context!!, binding.root)
-            binding.dateEditText.error = null
             openPickDateDialog(context!!, binding.dateEditText)
         }
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -117,13 +124,19 @@ class PreviewTaskFragment : Fragment() {
         binding.saveButton.setOnClickListener {
             taskTitle = binding.titleEditText.text()
             taskDescription = binding.descriptionEditText.text()
-            taskDate = dateToTimestamp(binding.dateEditText.text())
+            taskDate = when(binding.dateEditText.text.isNullOrBlank()) {
+                true -> null
+                false -> dateToTimestamp(binding.dateEditText.text.toString())
+            }
             saveEditedTaskIfValid()
         }
     }
 
     private fun setupTimeLeftText() {
-        binding.timeLeft.text = getTimeLeftText(taskDate)
+        binding.timeLeft.text = when (taskDate) {
+            null -> null
+            else -> getTimeLeftText(taskDate!!)
+        }
     }
 
     private fun setupCloseButton() {
@@ -159,6 +172,12 @@ class PreviewTaskFragment : Fragment() {
         }
     }
 
+    private fun setupRemoveDateButton() {
+        binding.removeDateButton.setOnClickListener {
+            binding.dateEditText.text = null
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.updateTaskLiveData.removeObserver(updateTaskObserver)
@@ -189,8 +208,13 @@ class PreviewTaskFragment : Fragment() {
     private fun loadTask() {
         taskTitle = arguments?.getString("title")!!
         taskDescription = arguments?.getString("description")!!
-        taskDate = arguments?.getLong("date")!!
+        val date = arguments?.getLong("date", 0)!!
+        taskDate = when (date) {
+            0L -> null
+            else -> date
+        }
         taskId = arguments?.getInt("id")!!
+        Log.v("AAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ${taskDate}")
     }
 
 
@@ -217,8 +241,7 @@ class PreviewTaskFragment : Fragment() {
     private fun validateEditTaskSheet(): Boolean {
         val titleIsValid = validateTitle()
         val descriptionIsValid = validateDescription()
-        val dateIsValid = validateDate()
-        return (titleIsValid && descriptionIsValid && dateIsValid)
+        return (titleIsValid && descriptionIsValid)
     }
 
     private fun validateTitle(): Boolean {
@@ -235,16 +258,6 @@ class PreviewTaskFragment : Fragment() {
         return when {
             binding.descriptionEditText.isTextBlank() -> {
                 binding.descriptionEditText.error = "Title cannot be blank!"
-                false
-            }
-            else -> true
-        }
-    }
-
-    private fun validateDate(): Boolean {
-        return when {
-            binding.dateEditText.isTextBlank() -> {
-                binding.dateEditText.error = "Select the date!"
                 false
             }
             else -> true

@@ -157,7 +157,7 @@ class TaskAdapter(
         data.sortWith(compareBy(
             { it.done },
             { !it.important },
-            { it.date },
+            { if(it.date == null) Long.MAX_VALUE else it.date },
             { it.uid }
         ))
     }

@@ -14,7 +14,7 @@ import com.gmail.dkozykowski.R.id.viewPagerFragment
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
 import com.gmail.dkozykowski.utils.getTimeLeftText
-import com.gmail.dkozykowski.utils.timestampToDate
+import com.gmail.dkozykowski.utils.timestampToDateWithDayName
 
 
 class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
@@ -34,9 +34,8 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
     ) {
         binding.title.text = task.title
         binding.description.text = task.description
-        binding.date.text = timestampToDate(task.date)
         binding.doneCheckbox.isChecked = task.done
-
+        setDateText(task.date)
         binding.doneCheckbox.setOnClickListener {
             task.done = !task.done
             updateCallback(task)
@@ -79,11 +78,12 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
             }.show()
             false
         }
-
-        setTimeLeftText(task.date)
     }
 
-    private fun setTimeLeftText(date: Long) {
-        binding.timeLeft.text = getTimeLeftText(date)
+    private fun setDateText(date: Long?) {
+        binding.date.text = when (date) {
+            null -> "Date was not set"
+            else -> "${timestampToDateWithDayName(date)} \n${getTimeLeftText(date)}"
+        }
     }
 }
