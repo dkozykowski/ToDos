@@ -5,8 +5,11 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.ui.activity.MainActivity
 
@@ -18,11 +21,19 @@ class AlarmReceiver : BroadcastReceiver() {
     private lateinit var description: String
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        createBuilder(context!!)
-        getDataFromIntent(intent!!)
-        with(NotificationManagerCompat.from(context)) {
-            notify(0, builder.build())
+        if (intent!!.action == "android.intent.action.BOOT_COMPLETED") {
+            remakeAllNotifications()
+        } else {
+            getDataFromIntent(intent)
+            createBuilder(context!!)
+            with(NotificationManagerCompat.from(context)) {
+                notify(0, builder.build())
+            }
         }
+    }
+
+    private fun remakeAllNotifications() {
+        
     }
 
     private fun getDataFromIntent(intent: Intent) {
@@ -37,14 +48,15 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra("id", id)
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-        builder = NotificationCompat.Builder(context)
-            .setSmallIcon(R.mipmap.ic_launcher)
+        builder = NotificationCompat.Builder(context, context.getString(R.string.channel_id))
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(description)
+            .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            .setShowWhen(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setDefaults(Notification.DEFAULT_VIBRATE)
-            .setDefaults(NotificationCompat.DEFAULT_SOUND)
-            .setVibrate(LongArray(0))
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setVibrate(LongArray(1) {400})
             .setContentIntent(pendingIntent)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)

@@ -18,6 +18,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 
 class NewTaskFragment : Fragment() {
+    private val FIVE_MIN_IN_MILIS = 300000
     private lateinit var binding: FragmentNewTaskBinding
     private val viewModel: TaskViewModel = TaskViewModel(NEW)
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
@@ -101,12 +102,13 @@ class NewTaskFragment : Fragment() {
         if (validateNewTaskSheet()) {
             val task = getTaskFromSheet()
             viewModel.sendTask(task)
-            //createReminderNotificationIfTimeSet(task) todo
+            createReminderNotificationIfTimeSet(task)
         }
     }
 
     private fun createReminderNotificationIfTimeSet(task: Task) {
-        if (task.date != null) {
+        //if (task.date != null && (task.date!! - System.currentTimeMillis()) > FIVE_MIN_IN_MILIS) {
+        if (task.date != null && (task.date!! - System.currentTimeMillis()) > 100) {
             createTaskNotification(task, context!!)
         }
     }
