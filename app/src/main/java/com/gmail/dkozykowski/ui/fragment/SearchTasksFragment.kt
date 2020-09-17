@@ -190,6 +190,7 @@ class SearchTasksFragment : Fragment() {
 
     private fun setupLowerboundDatePicking() {
         binding.startDateEditText.setOnClickListener {
+            binding.startDateEditText.preventDoubleClick()
             hideKeyboard(context!!, binding.root)
             binding.startDateEditText.error = null
             openPickDateDialog(context!!, binding.startDateEditText)
@@ -204,6 +205,7 @@ class SearchTasksFragment : Fragment() {
 
     private fun setupUpperboundDatePicking() {
         binding.endDateEditText.setOnClickListener {
+            binding.endDateEditText.preventDoubleClick()
             hideKeyboard(context!!, binding.root)
             binding.endDateEditText.error = null
             openPickDateDialog(context!!, binding.endDateEditText)

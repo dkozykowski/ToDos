@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView
@@ -129,5 +130,13 @@ fun createTaskNotification(task: Task, context: Context) {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, task.date!!, pendingIntent)
     else
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.date!!, pendingIntent)
+}
+
+fun View.preventDoubleClick() {
+    this.isEnabled = false
+    this.cancelPendingInputEvents()
+    Handler().postDelayed({
+        this.isEnabled = true
+    }, 500)
 }
 

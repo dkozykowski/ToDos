@@ -25,7 +25,12 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentDoneTasksBinding
     private val adapter by lazy { TaskAdapter( DONE, ::showEmptyInfo, updateIdlePage)}
-    lateinit var viewModel: TaskViewModel
+    val viewModel by lazy{
+        ViewModelProvider(
+            this,
+            viewModelFactory { TaskViewModel(DONE) }
+        ).get(TaskViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,17 +38,9 @@ class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : F
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentDoneTasksBinding.inflate(inflater, container, false)
-        setupViewModel()
         setupToast()
         setupLoadTaskLiveDataObserver()
         return binding.root
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            viewModelFactory { TaskViewModel(DONE) }
-        ).get(TaskViewModel::class.java)
     }
 
     private fun setupToast() {

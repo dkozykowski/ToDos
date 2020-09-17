@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -29,7 +30,12 @@ class PreviewTaskFragment : Fragment() {
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
             binding.saveButton.isClickable = true
+            showToastOnTaskEditSuccessful()
         }
+    }
+
+    private fun showToastOnTaskEditSuccessful() {
+        Toast.makeText(context, getString(R.string.edit_task_success), Toast.LENGTH_SHORT).show()
     }
 
     init {
@@ -109,6 +115,7 @@ class PreviewTaskFragment : Fragment() {
 
     private fun setupDatePicking() {
         binding.dateEditText.setOnClickListener {
+            binding.dateEditText.preventDoubleClick()
             hideKeyboard(context!!, binding.root)
             openPickDateDialog(context!!, binding.dateEditText)
         }
@@ -214,7 +221,6 @@ class PreviewTaskFragment : Fragment() {
             else -> date
         }
         taskId = arguments?.getInt("id")!!
-        Log.v("AAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ${taskDate}")
     }
 
 

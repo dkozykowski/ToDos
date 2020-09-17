@@ -76,6 +76,7 @@ class NewTaskFragment : Fragment() {
 
     private fun setupDatePicking() {
         binding.dateEditText.setOnClickListener {
+            binding.dateEditText.preventDoubleClick()
             hideKeyboard(context!!, binding.root)
             binding.dateEditText.error = null
             openPickDateDialog(context!!, binding.dateEditText)

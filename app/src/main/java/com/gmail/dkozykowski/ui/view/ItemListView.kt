@@ -14,6 +14,7 @@ import com.gmail.dkozykowski.R.id.viewPagerFragment
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ViewTaskItemBinding
 import com.gmail.dkozykowski.utils.getTimeLeftText
+import com.gmail.dkozykowski.utils.preventDoubleClick
 import com.gmail.dkozykowski.utils.timestampToDateWithDayName
 
 
@@ -29,7 +30,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
 
     fun bind(
         task: Task,
-        deleteCallback: () -> Unit,
+        deleteCallback: (task: Task) -> Unit,
         updateCallback: (task: Task) -> Unit
     ) {
         binding.title.text = task.title
@@ -56,6 +57,7 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         binding.root.setOnClickListener {
+            binding.root.preventDoubleClick()
             val bundle = bundleOf(
                 "title" to task.title,
                 "description" to task.description,
@@ -71,9 +73,10 @@ class ItemListView(context: Context, attributeSet: AttributeSet? = null) :
         }
 
         binding.root.setOnLongClickListener {
+            binding.root.preventDoubleClick()
             AlertDialog.Builder(context!!).apply {
                 setMessage("Delete task?")
-                setPositiveButton("Yes") { _, _ -> deleteCallback() }
+                setPositiveButton("Yes") { _, _ -> deleteCallback(task) }
                 setNegativeButton("No", null)
             }.show()
             false

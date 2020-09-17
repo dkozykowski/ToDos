@@ -41,15 +41,16 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.postView.bind(
             data[position],
-            { deleteTaskAtPosition(position) },
+            { task -> deleteTaskAtPosition(task) },
             { task -> updateTaskFromArgumentSource(task) })
     }
 
-    private fun deleteTaskAtPosition(position: Int) {
-        removeTaskFromDatabase(data[position])
-        notifyIdleTaskListUpdated(data[position].done)
-        data.removeAt(position)
-        displayTaskRemovedPresentation(position)
+    private fun deleteTaskAtPosition(task: Task) {
+        val index = data.indexOfFirst { it.uid == task.uid }
+        removeTaskFromDatabase(data[index])
+        notifyIdleTaskListUpdated(data[index].done)
+        data.removeAt(index)
+        displayTaskRemovedPresentation(index)
     }
 
     private fun displayTaskRemovedPresentation(position: Int) {
