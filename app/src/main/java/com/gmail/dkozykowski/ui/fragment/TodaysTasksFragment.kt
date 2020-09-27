@@ -25,7 +25,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentTodaysTasksBinding
     private val adapter by lazy { TaskAdapter(TODAYS, ::showEmptyInfo, updateIdlePage)}
-    val viewModel by lazy{
+    private val viewModel by lazy{
         ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(TODAYS) }
@@ -38,13 +38,18 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentTodaysTasksBinding.inflate(inflater, container, false)
-        setupToast()
+        setupAdapter()
+        setupViewModel()
         setupLoadTaskLiveDataObserver()
         return binding.root
     }
 
-    private fun setupToast() {
-        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+    private fun setupAdapter() {
+        adapter.context = context!!
+    }
+
+    private fun setupViewModel() {
+        viewModel.context = context!!
     }
 
     private fun setupLoadTaskLiveDataObserver() {
@@ -96,5 +101,9 @@ class TodaysTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
             binding.emptyListIcon.setAsVisible()
             binding.emptyListText.setAsVisible()
         }, 250)
+    }
+
+    fun reloadTasks() {
+        if(isAdded) viewModel.loadTasksWithoutFilters()
     }
 }

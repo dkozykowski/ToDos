@@ -24,7 +24,7 @@ interface TaskDao {
     ): List<Task>
 
     @Query("SELECT * FROM task WHERE uid = :id")
-    fun getTaskById(id: Int): Task
+    fun getTaskById(id: Long): Task
 
     @Insert
     fun insertTask(task: Task): Long

@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski.ui.adapter
 
+import android.content.Context
 import android.os.Handler
 import android.view.ViewGroup
 import android.widget.Toast
@@ -9,6 +10,8 @@ import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.ui.view.ItemListView
+import com.gmail.dkozykowski.utils.createTaskNotification
+import com.gmail.dkozykowski.utils.removeTaskNotification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -22,7 +25,8 @@ class TaskAdapter(
     RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
     class ViewHolder(val postView: ItemListView) : RecyclerView.ViewHolder(postView)
     private var data: ArrayList<Task> = ArrayList()
-    lateinit var toast: Toast
+    lateinit var context: Context
+    private val toast: Toast by lazy {Toast.makeText(context, "", Toast.LENGTH_SHORT)}
 
     fun isDataEmpty(): Boolean {
         return (itemCount == 0)
@@ -41,12 +45,13 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.postView.bind(
             data[position],
-            { task -> deleteTaskAtPosition(task) },
+            { task -> deleteTask(task) },
             { task -> updateTaskFromArgumentSource(task) })
     }
 
-    private fun deleteTaskAtPosition(task: Task) {
+    private fun deleteTask(task: Task) {
         val index = data.indexOfFirst { it.uid == task.uid }
+        removeTaskNotification(task, context)
         removeTaskFromDatabase(data[index])
         notifyIdleTaskListUpdated(data[index].done)
         data.removeAt(index)
@@ -72,6 +77,8 @@ class TaskAdapter(
 
     private fun updateTaskFromArgumentSource(task: Task) {
         val index = data.indexOfFirst { it.uid == task.uid }
+        removeTaskNotification(task, context)
+        if (!task.done) createTaskNotification(task, context)
         updateTaskInDatabaseWithPagesReloading(task)
         displayTaskChangedPresentation(index, task)
     }

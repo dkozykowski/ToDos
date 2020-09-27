@@ -1,5 +1,6 @@
 package com.gmail.dkozykowski.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -25,7 +26,7 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
     lateinit var binding: FragmentDoneTasksBinding
     private val adapter by lazy { TaskAdapter( DONE, ::showEmptyInfo, updateIdlePage)}
-    val viewModel by lazy{
+    private val viewModel by lazy{
         ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(DONE) }
@@ -38,13 +39,18 @@ class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : F
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentDoneTasksBinding.inflate(inflater, container, false)
-        setupToast()
+        setupAdapter()
+        setupViewModel()
         setupLoadTaskLiveDataObserver()
         return binding.root
     }
 
-    private fun setupToast() {
-        adapter.toast = Toast.makeText(context, "", Toast.LENGTH_SHORT)
+    private fun setupAdapter() {
+        adapter.context = context!!
+    }
+
+    private fun setupViewModel() {
+        viewModel.context = context!!
     }
 
     private fun setupLoadTaskLiveDataObserver() {
@@ -96,5 +102,14 @@ class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : F
             binding.emptyListIcon.setAsVisible()
             binding.emptyListText.setAsVisible()
         }, 250)
+    }
+
+    fun reloadTasks() {
+        if(isAdded) viewModel.loadTasksWithoutFilters()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel.loadTasksWithoutFilters()
     }
 }

@@ -1,5 +1,7 @@
 package com.gmail.dkozykowski.viewmodel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +11,8 @@ import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.model.FilterTaskDataModel
 import com.gmail.dkozykowski.model.UpdateTaskDataModel
+import com.gmail.dkozykowski.utils.createTaskNotification
+import com.gmail.dkozykowski.utils.removeTaskNotification
 import com.gmail.dkozykowski.utils.updateTaskWithData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,6 +22,7 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
     val loadTaskLiveData = MutableLiveData<LoadViewState>()
     val sendTaskLiveData = MutableLiveData<SendViewState>()
     val updateTaskLiveData = MutableLiveData<UpdateViewState>()
+    lateinit var context: Context
 
     fun loadTasksWithoutFilters() {
         if (loadTaskLiveData.value == LoadViewState.Loading) return
@@ -61,7 +66,8 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
 
     private fun getFilteredTaskSFromDatabase(filterTaskData: FilterTaskDataModel): List<Task> {
         with(filterTaskData) {
-            return DB.db.taskDao().getFilteredTasks(title, description, timeLowerBound, timeUpperBound)
+            return DB.db.taskDao()
+                .getFilteredTasks(title, description, timeLowerBound, timeUpperBound)
         }
     }
 
@@ -71,8 +77,9 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    DB.db.taskDao().insertTask(task)
-                    sendTaskLiveData.postValue(SendViewState.Success)
+                    val sentTaskDatabaseId = DB.db.taskDao().insertTask(task)
+                    task.uid = sentTaskDatabaseId
+                    sendTaskLiveData.postValue(SendViewState.Success(task))
                 } catch (e: Exception) {
                     e.printStackTrace()
                     sendTaskLiveData.postValue(SendViewState.Error(e.message.toString()))
@@ -98,9 +105,11 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
 
     private fun getTaskFromDatabaseAndUpdate(updateTaskData: UpdateTaskDataModel) {
         val taskToUpdate = DB.db.taskDao().getTaskById(updateTaskData.id)
+        removeTaskNotification(taskToUpdate, context)
         taskToUpdate.updateTaskWithData(updateTaskData)
+        createTaskNotification(taskToUpdate, context)
         DB.db.taskDao().updateTask(taskToUpdate)
-        updateTaskLiveData.postValue(UpdateViewState.Success)
+        updateTaskLiveData.postValue(UpdateViewState.Success(taskToUpdate))
     }
 
     sealed class LoadViewState {
@@ -112,12 +121,12 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
     sealed class SendViewState {
         object Loading : SendViewState()
         class Error(val errorMessage: String) : SendViewState()
-        object Success : SendViewState()
+        class Success(val task: Task) : SendViewState()
     }
 
     sealed class UpdateViewState {
-        object Loading : UpdateViewState()
+        class Success(val task: Task) : UpdateViewState()
         class Error(val errorMessage: String) : UpdateViewState()
-        object Success : UpdateViewState()
+        object Loading : UpdateViewState()
     }
 }

@@ -18,12 +18,13 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
 
 class NewTaskFragment : Fragment() {
-    private val FIVE_MIN_IN_MILIS = 300000
     private lateinit var binding: FragmentNewTaskBinding
     private val viewModel: TaskViewModel = TaskViewModel(NEW)
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             findNavController().navigateUp()
+            createTaskNotification(it.task, context!!)
+            Toast.makeText(context!!, "${it.task.uid}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -34,13 +35,57 @@ class NewTaskFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_task, container, false)
-        viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
+        loadSetupFunctions()
+        return binding.root
+    }
+
+    private fun loadSetupFunctions() {
+        setupViewModel()
         setupDatePicking()
         setupAddTaskButton()
+        setupOtherButtons()
+    }
+
+    private fun setupViewModel() {
+        viewModel.context = context!!
+        viewModel.sendTaskLiveData.observeForever(sendMessageObserver)
+    }
+
+    private fun setupAddTaskButton() {
+        binding.addTaskButton.setOnClickListener {
+            try {
+                sendTaskIfValid()
+            } catch (e: Exception) {
+                Toast.makeText(context!!, e.message.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun sendTaskIfValid() {
+        if (validateNewTaskSheet()) {
+            val task = getTaskFromSheet()
+            viewModel.sendTask(task)
+        }
+    }
+
+    private fun getTaskFromSheet(): Task {
+        return Task(
+            0,
+            binding.titleEditText.text(),
+            binding.descriptionEditText.text(),
+            when (binding.dateEditText.text.isNullOrBlank()) {
+                true -> null
+                false -> dateToTimestamp(binding.dateEditText.text())
+            },
+            false,
+            false
+        )
+    }
+
+    private fun setupOtherButtons() {
         binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
         binding.cancelButton.setOnClickListener { onBackPressed() }
         binding.removeDateButton.setOnClickListener { binding.dateEditText.text = null }
-        return binding.root
     }
 
     override fun onDestroy() {
@@ -87,45 +132,6 @@ class NewTaskFragment : Fragment() {
                 binding.dateEditText.callOnClick()
             }
         }
-    }
-
-    private fun setupAddTaskButton() {
-        binding.addTaskButton.setOnClickListener {
-            try {
-                sendTaskIfValid()
-            } catch (e: Exception) {
-                Toast.makeText(context!!, e.message.toString(), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun sendTaskIfValid() {
-        if (validateNewTaskSheet()) {
-            val task = getTaskFromSheet()
-            viewModel.sendTask(task)
-            createReminderNotificationIfTimeSet(task)
-        }
-    }
-
-    private fun createReminderNotificationIfTimeSet(task: Task) {
-        //if (task.date != null && (task.date!! - System.currentTimeMillis()) > FIVE_MIN_IN_MILIS) {
-        if (task.date != null && (task.date!! - System.currentTimeMillis()) > 100) {
-            createTaskNotification(task, context!!)
-        }
-    }
-
-    private fun getTaskFromSheet(): Task {
-        return Task(
-            0,
-            binding.titleEditText.text(),
-            binding.descriptionEditText.text(),
-            when (binding.dateEditText.text.isNullOrBlank()) {
-                true -> null
-                false -> dateToTimestamp(binding.dateEditText.text())
-            },
-            false,
-            false
-        )
     }
 
     fun onBackPressed() {

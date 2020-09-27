@@ -30,7 +30,6 @@ class ViewPagerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_view_pager, container, false)
         binding.viewPager.adapter = object : FragmentPagerAdapter(childFragmentManager) {
             override fun getItem(position: Int): Fragment = pages[position]
@@ -68,9 +67,9 @@ class ViewPagerFragment : Fragment() {
 
     private fun updateIdlePage(fragmentType: QueryTaskType) {
         when (fragmentType) {
-            TODAYS -> (pages[0] as TodaysTasksFragment).viewModel.loadTasksWithoutFilters()
-            ALL_ACTIVE -> (pages[1] as ActiveTasksFragment).viewModel.loadTasksWithoutFilters()
-            DONE -> (pages[2] as DoneTasksFragment).viewModel.loadTasksWithoutFilters()
+            TODAYS -> (pages[0] as TodaysTasksFragment).reloadTasks()
+            ALL_ACTIVE -> (pages[1] as ActiveTasksFragment).reloadTasks()
+            DONE -> (pages[2] as DoneTasksFragment).reloadTasks()
             else -> {}
         }
     }

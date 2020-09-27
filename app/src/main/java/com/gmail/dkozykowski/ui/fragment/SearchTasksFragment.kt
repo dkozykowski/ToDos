@@ -7,7 +7,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,10 +26,14 @@ import com.gmail.dkozykowski.viewmodel.TaskViewModel
 class SearchTasksFragment : Fragment() {
     private lateinit var binding: FragmentSearchTasksBinding
     private val adapter by lazy { TaskAdapter(SEARCH, ::showEmptyInfo) }
-    private lateinit var viewModel: TaskViewModel
     private var areFiltersShown = false
-    private lateinit var toast : Toast
+    private lateinit var toast: Toast
     private var searchButtonResultToastState = DONE
+    private val viewModel by lazy { ViewModelProvider(
+        this,
+        viewModelFactory { TaskViewModel(SEARCH) }
+    ).get(TaskViewModel::class.java) }
+
     enum class LoadingState { AWAITING, DONE }
 
     override fun onCreateView(
@@ -45,6 +48,7 @@ class SearchTasksFragment : Fragment() {
 
     private fun loadSetupFunctions() {
         setupToast()
+        setupAdapter()
         setupViewModel()
         setupLoadTaskLiveDataObserver()
         setupButtons()
@@ -53,14 +57,14 @@ class SearchTasksFragment : Fragment() {
 
     private fun setupToast() {
         toast = Toast.makeText(context!!, "", Toast.LENGTH_SHORT)
-        adapter.toast = toast
+    }
+
+    private fun setupAdapter() {
+        adapter.context = context!!
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            viewModelFactory { TaskViewModel(SEARCH) }
-        ).get(TaskViewModel::class.java)
+        viewModel.context = context!!
     }
 
     private fun setupButtons() {
@@ -124,7 +128,7 @@ class SearchTasksFragment : Fragment() {
     }
 
     private fun updateEmptyInfo() {
-        when(adapter.isDataEmpty()) {
+        when (adapter.isDataEmpty()) {
             true -> binding.emptyListText.setAsVisible()
             else -> binding.emptyListText.setAsHidden()
         }
@@ -162,7 +166,9 @@ class SearchTasksFragment : Fragment() {
                 if (titleEditText.isTextBlank()) "" else titleEditText.text(),
                 if (descriptionEditText.isTextBlank()) "" else descriptionEditText.text(),
                 if (startDateEditText.isTextBlank()) 0 else dateToTimestamp(startDateEditText.text()),
-                if (endDateEditText.isTextBlank()) Long.MAX_VALUE else dateToTimestamp(endDateEditText.text())
+                if (endDateEditText.isTextBlank()) Long.MAX_VALUE else dateToTimestamp(
+                    endDateEditText.text()
+                )
             )
         }
     }

@@ -1,7 +1,6 @@
 package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -24,13 +23,14 @@ class PreviewTaskFragment : Fragment() {
     private lateinit var taskTitle: String
     private lateinit var taskDescription: String
     private val viewModel = TaskViewModel(PREVIEW)
-    private var taskId = 0
+    private var taskId = 0L
     private var taskDate: Long? = null
     private var isTaskEditModeOn = false
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
             binding.saveButton.isClickable = true
             showToastOnTaskEditSuccessful()
+            createTaskNotification(it.task, context!!)
         }
     }
 
@@ -48,7 +48,6 @@ class PreviewTaskFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         loadTask()
-        viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_preview_task, container, false)
         loadSetupFunctions()
@@ -56,6 +55,7 @@ class PreviewTaskFragment : Fragment() {
     }
 
     private fun loadSetupFunctions() {
+        setupViewModel()
         setViewToCurrentMode()
         setupDatePicking()
         setupSaveButton()
@@ -65,6 +65,11 @@ class PreviewTaskFragment : Fragment() {
         setupCancelButton()
         setupRootOnClickEvent()
         setupRemoveDateButton()
+    }
+
+    private fun setupViewModel() {
+        viewModel.updateTaskLiveData.observeForever(updateTaskObserver)
+        viewModel.context = context!!
     }
 
     private fun setViewToCurrentMode() {
@@ -117,7 +122,7 @@ class PreviewTaskFragment : Fragment() {
         binding.dateEditText.setOnClickListener {
             binding.dateEditText.preventDoubleClick()
             hideKeyboard(context!!, binding.root)
-            openPickDateDialog(context!!, binding.dateEditText)
+            openPickDateDialog(context!!, binding.dateEditText, taskDate)
         }
         binding.dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && isTaskEditModeOn) {
@@ -129,13 +134,26 @@ class PreviewTaskFragment : Fragment() {
 
     private fun setupSaveButton() {
         binding.saveButton.setOnClickListener {
-            taskTitle = binding.titleEditText.text()
-            taskDescription = binding.descriptionEditText.text()
-            taskDate = when(binding.dateEditText.text.isNullOrBlank()) {
-                true -> null
-                false -> dateToTimestamp(binding.dateEditText.text.toString())
+            if (validateEditTaskSheet()) {
+                taskTitle = binding.titleEditText.text()
+                taskDescription = binding.descriptionEditText.text()
+                taskDate = when(binding.dateEditText.text.isNullOrBlank()) {
+                    true -> null
+                    false -> dateToTimestamp(binding.dateEditText.text.toString())
+                }
+                saveEditedTask()
             }
-            saveEditedTaskIfValid()
+        }
+    }
+
+    private fun saveEditedTask() {
+        if (validateEditTaskSheet()) {
+            binding.saveButton.isClickable = false
+            isTaskEditModeOn = false
+            setViewToCurrentMode()
+            val updateTaskData =
+                UpdateTaskDataModel(taskId, taskTitle, taskDescription, taskDate)
+            viewModel.updateTask(updateTaskData)
         }
     }
 
@@ -201,17 +219,6 @@ class PreviewTaskFragment : Fragment() {
         } else findNavController().navigateUp()
     }
 
-    private fun saveEditedTaskIfValid() {
-        if (validateEditTaskSheet()) {
-            binding.saveButton.isClickable = false
-            isTaskEditModeOn = false
-            setViewToCurrentMode()
-            val updateTaskData =
-                UpdateTaskDataModel(taskId, taskTitle, taskDescription, taskDate)
-            viewModel.updateTask(updateTaskData)
-        }
-    }
-
     private fun loadTask() {
         taskTitle = arguments?.getString("title")!!
         taskDescription = arguments?.getString("description")!!
@@ -220,7 +227,8 @@ class PreviewTaskFragment : Fragment() {
             0L -> null
             else -> date
         }
-        taskId = arguments?.getInt("id")!!
+        taskId = arguments?.getLong("id")!!
+        Toast.makeText(context!!, "$taskId", Toast.LENGTH_LONG).show()
     }
 
 
