@@ -18,35 +18,49 @@ import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
-import com.gmail.dkozykowski.ui.fragment.NewTaskFragment
-import com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment
-import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment
+import com.gmail.dkozykowski.model.ActionBarButtonModel
+import com.gmail.dkozykowski.ui.fragment.BaseFragment
 import com.gmail.dkozykowski.utils.remakeAllNotifications
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+const val NO_ID_GIVEN_CODE = -1L
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val activityStartedFromNotificationWithId by lazy {
-        intent.getLongExtra("id", -1)
+        intent.getLongExtra("id", NO_ID_GIVEN_CODE)
     }
+    lateinit var leftActionBarButton: ActionBarButtonModel
+    lateinit var rightActionBarButton: ActionBarButtonModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        setupActionBarButtons()
+        loadSetupFunctions()
+    }
+
+    private fun setupActionBarButtons() {
+        leftActionBarButton = ActionBarButtonModel(
+            binding.leftActionBarButton, binding.leftActionBarButtonIcon
+        )
+        rightActionBarButton = ActionBarButtonModel(
+            binding.rightActionBarButton, binding.rightActionBarButtonIcon
+        )
+    }
+
+    private fun loadSetupFunctions() {
         DB.createDatabase(this)
+        setSupportActionBar(applicationToolbar)
         createNotificationChannel()
         remakeAllNotifications(this)
         checkIfApplicationWasEverStarted()
-    }
-
-    override fun onStart() {
-        super.onStart()
         previewTaskIfAppStartedFromNotification()
     }
 
@@ -78,10 +92,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun previewTaskIfAppStartedFromNotification() {
-        if (activityStartedFromNotificationWithId != -1L) getTaskFromDatabaseAndPreview(
+        if (activityStartedFromNotificationWithId != NO_ID_GIVEN_CODE) getTaskFromDatabaseAndPreview(
             activityStartedFromNotificationWithId
         )
     }
+
 
     private fun getTaskFromDatabaseAndPreview(id: Long) {
         GlobalScope.launch {
@@ -110,20 +125,27 @@ class MainActivity : AppCompatActivity() {
     private fun showFirstEntryDialog() {
         AlertDialog.Builder(this).apply {
             setCancelable(false)
-            setMessage("Some devices may cancel task reminder notifications due to battery optimization features. In order to fix that issue, open ToDos after each reboot to reschedule reminders.")
+            setMessage(getString(R.string.entry_dialog))
             setPositiveButton("OK") { _, _ -> }
         }.show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setupNavigation()
+    }
+
+    private fun setupNavigation() {
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.actionBar.fragmentLabel.text = destination.label
+        }
     }
 
     override fun onBackPressed() {
         val navHostFragment: NavHostFragment? =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        when (val fragment = navHostFragment!!.childFragmentManager.fragments[0]) {
-            is PreviewTaskFragment -> fragment.onBackPressed()
-            is NewTaskFragment -> fragment.onBackPressed()
-            is SearchTasksFragment -> fragment.onBackPressed()
-        }
+        val fragment = navHostFragment!!.childFragmentManager.fragments[0] as BaseFragment
+        fragment.onBackPressed()
     }
 }
-
-

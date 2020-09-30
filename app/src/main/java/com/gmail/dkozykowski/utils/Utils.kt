@@ -4,6 +4,7 @@ import android.app.*
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Handler
 import android.view.View
@@ -137,7 +138,7 @@ fun createTaskNotification(task: Task, context: Context) {
         context.applicationContext,
         task.uid.toInt(),
         intent,
-        FLAG_UPDATE_CURRENT
+        0
     )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

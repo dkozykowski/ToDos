@@ -3,4 +3,5 @@
     <string name="channel_id">MainChannel</string>
     <string name="channel_name">Notification channel</string>
     <string name="edit_task_success">Task successfully edited.</string>
+    <string name="entry_dialog">Some devices may cancel task reminder notifications due to battery optimization features. In order to fix that issue, open ToDos after each reboot to reschedule reminders.</string>
 </resources>

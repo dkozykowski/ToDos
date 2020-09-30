@@ -23,7 +23,7 @@ import com.gmail.dkozykowski.utils.setAsVisible
 import com.gmail.dkozykowski.utils.viewModelFactory
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : Fragment() {
+class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : PageFragment() {
     lateinit var binding: FragmentActiveTasksBinding
     private val adapter by lazy { TaskAdapter(ALL_ACTIVE, ::showEmptyInfo, updateIdlePage) }
     private val viewModel by lazy{
@@ -105,7 +105,7 @@ class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
         }, 250)
     }
 
-    fun reloadTasks() {
+    override fun reloadTasks() {
         if(isAdded) viewModel.loadTasksWithoutFilters()
     }
 

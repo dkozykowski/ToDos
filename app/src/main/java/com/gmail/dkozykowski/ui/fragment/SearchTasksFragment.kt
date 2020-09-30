@@ -15,25 +15,30 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.gmail.dkozykowski.QueryTaskType.SEARCH
+import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentSearchTasksBinding
+import com.gmail.dkozykowski.model.ActionBarButtonModel
 import com.gmail.dkozykowski.model.FilterTaskDataModel
+import com.gmail.dkozykowski.ui.activity.MainActivity
 import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.AWAITING
 import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.DONE
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
-class SearchTasksFragment : Fragment() {
+class SearchTasksFragment : BaseFragment() {
     private lateinit var binding: FragmentSearchTasksBinding
     private val adapter by lazy { TaskAdapter(SEARCH, ::showEmptyInfo) }
     private var areFiltersShown = false
     private lateinit var toast: Toast
+    override var leftActionBarButtonHandler: ActionBarButtonModel? = null
+    override var rightActionBarButtonHandler: ActionBarButtonModel? = null
     private var searchButtonResultToastState = DONE
     private val viewModel by lazy { ViewModelProvider(
         this,
         viewModelFactory { TaskViewModel(SEARCH) }
     ).get(TaskViewModel::class.java) }
-
     enum class LoadingState { AWAITING, DONE }
 
     override fun onCreateView(
@@ -47,12 +52,20 @@ class SearchTasksFragment : Fragment() {
     }
 
     private fun loadSetupFunctions() {
+        setupActionBarButtonsHandlers()
         setupToast()
         setupAdapter()
         setupViewModel()
         setupLoadTaskLiveDataObserver()
         setupButtons()
         setupDatePicking()
+        setupLeftActionBarButton()
+        setupRightActionBarButton()
+    }
+
+    private fun setupActionBarButtonsHandlers() {
+        leftActionBarButtonHandler = (activity as MainActivity).leftActionBarButton
+        rightActionBarButtonHandler = (activity as MainActivity).rightActionBarButton
     }
 
     private fun setupToast() {
@@ -68,14 +81,9 @@ class SearchTasksFragment : Fragment() {
     }
 
     private fun setupButtons() {
-        setupCancelButton()
         setupRootOnClickEvent()
         setupSearchButton()
         setupUpdateFiltersViewButton()
-    }
-
-    private fun setupCancelButton() {
-        binding.cancelButton.setOnClickListener { onBackPressed() }
     }
 
     private fun setupRootOnClickEvent() {
@@ -119,7 +127,7 @@ class SearchTasksFragment : Fragment() {
         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed() {
         findNavController().navigateUp()
     }
 
@@ -192,6 +200,16 @@ class SearchTasksFragment : Fragment() {
     private fun setupDatePicking() {
         setupLowerboundDatePicking()
         setupUpperboundDatePicking()
+    }
+
+    private fun setupLeftActionBarButton() {
+        leftActionBarButtonHandler?.setVisible(false)
+    }
+
+    private fun setupRightActionBarButton() {
+        rightActionBarButtonHandler?.setVisible(true)
+        rightActionBarButtonHandler?.setIcon(R.drawable.ic_baseline_arrow_back_24)
+        rightActionBarButtonHandler?.setOnClickListener { onBackPressed() }
     }
 
     private fun setupLowerboundDatePicking() {

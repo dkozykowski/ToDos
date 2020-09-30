@@ -4,27 +4,31 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.QueryTaskType.NEW
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.FragmentNewTaskBinding
+import com.gmail.dkozykowski.model.ActionBarButtonModel
+import com.gmail.dkozykowski.ui.activity.MainActivity
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 
-class NewTaskFragment : Fragment() {
+class NewTaskFragment : BaseFragment() {
     private lateinit var binding: FragmentNewTaskBinding
     private val viewModel: TaskViewModel = TaskViewModel(NEW)
+    override var leftActionBarButtonHandler: ActionBarButtonModel? = null
+    override var rightActionBarButtonHandler: ActionBarButtonModel? = null
     private val sendMessageObserver: (TaskViewModel.SendViewState) -> Unit = {
         if (it is TaskViewModel.SendViewState.Success) {
             findNavController().navigateUp()
             createTaskNotification(it.task, context!!)
-            Toast.makeText(context!!, "${it.task.uid}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -40,10 +44,18 @@ class NewTaskFragment : Fragment() {
     }
 
     private fun loadSetupFunctions() {
+        setupActionBarButtonsHandlers()
         setupViewModel()
         setupDatePicking()
         setupAddTaskButton()
         setupOtherButtons()
+        setupLeftActionBarButton()
+        setupRightActionBarButton()
+    }
+
+    private fun setupActionBarButtonsHandlers() {
+        leftActionBarButtonHandler = (activity as MainActivity).leftActionBarButton
+        rightActionBarButtonHandler = (activity as MainActivity).rightActionBarButton
     }
 
     private fun setupViewModel() {
@@ -84,8 +96,17 @@ class NewTaskFragment : Fragment() {
 
     private fun setupOtherButtons() {
         binding.root.setOnClickListener { hideKeyboard(context!!, binding.root) }
-        binding.cancelButton.setOnClickListener { onBackPressed() }
         binding.removeDateButton.setOnClickListener { binding.dateEditText.text = null }
+    }
+
+    private fun setupLeftActionBarButton() {
+        leftActionBarButtonHandler?.setVisible(false)
+    }
+
+    private fun setupRightActionBarButton() {
+        rightActionBarButtonHandler?.setVisible(true)
+        rightActionBarButtonHandler?.setIcon(R.drawable.ic_baseline_arrow_back_24)
+        rightActionBarButtonHandler?.setOnClickListener { onBackPressed() }
     }
 
     override fun onDestroy() {
@@ -134,10 +155,11 @@ class NewTaskFragment : Fragment() {
         }
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed() {
         with(binding) {
             if (titleEditText.isTextBlank() && descriptionEditText.isTextBlank() &&
-                dateEditText.isTextBlank()) findNavController().navigateUp()
+                dateEditText.isTextBlank()
+            ) findNavController().navigateUp()
             else showExitDialog()
         }
     }

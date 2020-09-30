@@ -9,16 +9,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.gmail.dkozykowski.QueryTaskType.PREVIEW
 import com.gmail.dkozykowski.R
 import com.gmail.dkozykowski.databinding.FragmentPreviewTaskBinding
+import com.gmail.dkozykowski.model.ActionBarButtonModel
 import com.gmail.dkozykowski.model.UpdateTaskDataModel
+import com.gmail.dkozykowski.ui.activity.MainActivity
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
 
-class PreviewTaskFragment : Fragment() {
+class PreviewTaskFragment : BaseFragment() {
     private lateinit var binding: FragmentPreviewTaskBinding
     private lateinit var taskTitle: String
     private lateinit var taskDescription: String
@@ -26,6 +27,8 @@ class PreviewTaskFragment : Fragment() {
     private var taskId = 0L
     private var taskDate: Long? = null
     private var isTaskEditModeOn = false
+    override var leftActionBarButtonHandler: ActionBarButtonModel? = null
+    override var rightActionBarButtonHandler: ActionBarButtonModel? = null
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
         if (it is TaskViewModel.UpdateViewState.Success) {
             binding.saveButton.isClickable = true
@@ -55,16 +58,22 @@ class PreviewTaskFragment : Fragment() {
     }
 
     private fun loadSetupFunctions() {
+        setupActionBarButtonsHandlers()
         setupViewModel()
         setViewToCurrentMode()
         setupDatePicking()
         setupSaveButton()
         setupTimeLeftText()
         setupCloseButton()
-        setupEditButton()
-        setupCancelButton()
         setupRootOnClickEvent()
         setupRemoveDateButton()
+        setupLeftActionBarButton()
+        setupRightActionBarButton()
+    }
+
+    private fun setupActionBarButtonsHandlers() {
+        leftActionBarButtonHandler = (activity as MainActivity).leftActionBarButton
+        rightActionBarButtonHandler = (activity as MainActivity).rightActionBarButton
     }
 
     private fun setupViewModel() {
@@ -80,22 +89,33 @@ class PreviewTaskFragment : Fragment() {
     }
 
     private fun setViewToEditMode() {
+        leftActionBarButtonHandler?.setVisible(false)
+        rightActionBarButtonHandler?.setIcon(R.drawable.ic_round_close_24)
+        setRightButtonAsCancelEditionButton()
         with(binding) {
             titleEditText.setText(taskTitle)
             descriptionEditText.setText(taskDescription)
-            if(taskDate != null) dateEditText.setText(timestampToDate(taskDate!!))
-
+            if (taskDate != null) dateEditText.setText(timestampToDate(taskDate!!))
             editModeLayout.visibility = VISIBLE
-            cancelButton.visibility = VISIBLE
-            cancelButtonIcon.visibility = VISIBLE
-
             previewModeLayout.visibility = GONE
-            editButton.visibility = GONE
-            editButtonIcon.visibility = GONE
+        }
+    }
+
+    private fun setRightButtonAsCancelEditionButton() {
+        rightActionBarButtonHandler?.setOnClickListener {
+            if (wasEditTaskSheetEdited()) {
+                showExitDialog()
+            } else {
+                isTaskEditModeOn = false
+                setViewToCurrentMode()
+            }
         }
     }
 
     private fun setViewToPreviewMode() {
+        leftActionBarButtonHandler?.setVisible(true)
+        rightActionBarButtonHandler?.setIcon(R.drawable.ic_baseline_arrow_back_24)
+        rightActionBarButtonHandler?.setOnClickListener { onBackPressed() }
         with(binding) {
             titleText.text = taskTitle
             descriptionText.text = taskDescription
@@ -107,14 +127,8 @@ class PreviewTaskFragment : Fragment() {
                 null -> null
                 else -> getTimeLeftText(taskDate!!)
             }
-
             editModeLayout.visibility = GONE
-            cancelButton.visibility = GONE
-            cancelButtonIcon.visibility = GONE
-
             previewModeLayout.visibility = VISIBLE
-            editButton.visibility = VISIBLE
-            editButtonIcon.visibility = VISIBLE
         }
     }
 
@@ -137,7 +151,7 @@ class PreviewTaskFragment : Fragment() {
             if (validateEditTaskSheet()) {
                 taskTitle = binding.titleEditText.text()
                 taskDescription = binding.descriptionEditText.text()
-                taskDate = when(binding.dateEditText.text.isNullOrBlank()) {
+                taskDate = when (binding.dateEditText.text.isNullOrBlank()) {
                     true -> null
                     false -> dateToTimestamp(binding.dateEditText.text.toString())
                 }
@@ -170,24 +184,6 @@ class PreviewTaskFragment : Fragment() {
         }
     }
 
-    private fun setupEditButton() {
-        binding.editButton.setOnClickListener {
-            isTaskEditModeOn = true
-            setViewToCurrentMode()
-        }
-    }
-
-    private fun setupCancelButton() {
-        binding.cancelButton.setOnClickListener {
-            if (wasEditTaskSheetEdited()) {
-                showExitDialog()
-            } else {
-                isTaskEditModeOn = false
-                setViewToCurrentMode()
-            }
-        }
-    }
-
     private fun setupRootOnClickEvent() {
         binding.root.setOnClickListener {
             hideKeyboard(
@@ -203,12 +199,27 @@ class PreviewTaskFragment : Fragment() {
         }
     }
 
+    private fun setupLeftActionBarButton() {
+        leftActionBarButtonHandler?.setVisible(true)
+        leftActionBarButtonHandler?.setIcon(R.drawable.ic_round_edit_24)
+        leftActionBarButtonHandler?.setOnClickListener {
+            isTaskEditModeOn = true
+            setViewToCurrentMode()
+        }
+    }
+
+    private fun setupRightActionBarButton() {
+        rightActionBarButtonHandler?.setVisible(true)
+        rightActionBarButtonHandler?.setIcon(R.drawable.ic_baseline_arrow_back_24)
+        rightActionBarButtonHandler?.setOnClickListener { onBackPressed() }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.updateTaskLiveData.removeObserver(updateTaskObserver)
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed() {
         if (isTaskEditModeOn) {
             if (wasEditTaskSheetEdited()) {
                 showExitDialog()
@@ -228,7 +239,6 @@ class PreviewTaskFragment : Fragment() {
             else -> date
         }
         taskId = arguments?.getLong("id")!!
-        Toast.makeText(context!!, "$taskId", Toast.LENGTH_LONG).show()
     }
 
 

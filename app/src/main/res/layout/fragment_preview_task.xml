@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:elevation="4dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="ToDos:  Preview the task"
-            app:titleTextColor="@color/md_white_1000" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/editModeLayout"
@@ -25,7 +16,7 @@
             android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/titleInputLayout"
@@ -147,7 +138,7 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/titleHeader"
@@ -268,61 +259,5 @@
                 app:layout_constraintTop_toBottomOf="@id/descriptionText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editButton"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:elevation="4dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar"
-            app:layout_constraintEnd_toEndOf="@id/toolbar"
-            app:layout_constraintTop_toTopOf="@id/toolbar" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/editButtonIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="6dp"
-            android:src="@drawable/ic_round_edit_24"
-            android:tint="@color/md_white_1000"
-            app:layout_constraintBottom_toBottomOf="@id/editButton"
-            app:layout_constraintEnd_toEndOf="@id/editButton"
-            app:layout_constraintStart_toStartOf="@id/editButton"
-            app:layout_constraintTop_toTopOf="@id/editButton" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancelButton"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:elevation="4dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar"
-            app:layout_constraintEnd_toEndOf="@id/toolbar"
-            app:layout_constraintTop_toTopOf="@id/toolbar" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/cancelButtonIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="4dp"
-            android:src="@drawable/ic_return"
-            android:tint="@color/md_white_1000"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/cancelButton"
-            app:layout_constraintEnd_toEndOf="@id/cancelButton"
-            app:layout_constraintStart_toStartOf="@id/cancelButton"
-            app:layout_constraintTop_toTopOf="@id/cancelButton" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
