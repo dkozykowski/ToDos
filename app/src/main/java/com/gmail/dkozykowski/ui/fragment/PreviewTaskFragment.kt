@@ -18,6 +18,7 @@ import com.gmail.dkozykowski.model.UpdateTaskDataModel
 import com.gmail.dkozykowski.ui.activity.MainActivity
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import com.gmail.dkozykowski.viewmodel.TaskViewModel.UpdateViewState.Success
 
 class PreviewTaskFragment : BaseFragment() {
     private lateinit var binding: FragmentPreviewTaskBinding
@@ -30,10 +31,12 @@ class PreviewTaskFragment : BaseFragment() {
     override var leftActionBarButtonHandler: ActionBarButtonModel? = null
     override var rightActionBarButtonHandler: ActionBarButtonModel? = null
     private val updateTaskObserver: (TaskViewModel.UpdateViewState) -> Unit = {
-        if (it is TaskViewModel.UpdateViewState.Success) {
+        if (it is Success) {
             binding.saveButton.isClickable = true
             showToastOnTaskEditSuccessful()
-            createTaskNotification(it.task, context!!)
+            createTaskNotificationPendingEvent(it.task, context!!)
+            isTaskEditModeOn = false
+            setViewToCurrentMode()
         }
     }
 
@@ -161,14 +164,10 @@ class PreviewTaskFragment : BaseFragment() {
     }
 
     private fun saveEditedTask() {
-        if (validateEditTaskSheet()) {
-            binding.saveButton.isClickable = false
-            isTaskEditModeOn = false
-            setViewToCurrentMode()
-            val updateTaskData =
-                UpdateTaskDataModel(taskId, taskTitle, taskDescription, taskDate)
-            viewModel.updateTask(updateTaskData)
-        }
+        binding.saveButton.isClickable = false
+        val updateTaskData =
+            UpdateTaskDataModel(taskId, taskTitle, taskDescription, taskDate)
+        viewModel.updateTask(updateTaskData)
     }
 
     private fun setupTimeLeftText() {
@@ -227,7 +226,7 @@ class PreviewTaskFragment : BaseFragment() {
                 isTaskEditModeOn = false
                 setViewToCurrentMode()
             }
-        } else findNavController().navigateUp()
+        } else if (viewModel.updateTaskLiveData.value is Success) findNavController().navigateUp()
     }
 
     private fun loadTask() {

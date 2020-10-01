@@ -10,8 +10,8 @@ import com.gmail.dkozykowski.QueryTaskType.*
 import com.gmail.dkozykowski.data.DB
 import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.ui.view.ItemListView
-import com.gmail.dkozykowski.utils.createTaskNotification
-import com.gmail.dkozykowski.utils.removeTaskNotification
+import com.gmail.dkozykowski.utils.createTaskNotificationPendingEvent
+import com.gmail.dkozykowski.utils.removeTaskNotificationPendingEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -51,7 +51,7 @@ class TaskAdapter(
 
     private fun deleteTask(task: Task) {
         val index = data.indexOfFirst { it.uid == task.uid }
-        removeTaskNotification(task, context)
+        removeTaskNotificationPendingEvent(task, context)
         removeTaskFromDatabase(data[index])
         notifyIdleTaskListUpdated(data[index].done)
         data.removeAt(index)
@@ -77,8 +77,8 @@ class TaskAdapter(
 
     private fun updateTaskFromArgumentSource(task: Task) {
         val index = data.indexOfFirst { it.uid == task.uid }
-        removeTaskNotification(task, context)
-        if (!task.done) createTaskNotification(task, context)
+        removeTaskNotificationPendingEvent(task, context)
+        if (!task.done) createTaskNotificationPendingEvent(task, context)
         updateTaskInDatabaseWithPagesReloading(task)
         displayTaskChangedPresentation(index, task)
     }

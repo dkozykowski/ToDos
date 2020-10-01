@@ -1,10 +1,10 @@
 package com.gmail.dkozykowski.utils
 
 import android.app.*
+import android.app.PendingIntent.FLAG_ONE_SHOT
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Handler
 import android.view.View
@@ -25,6 +25,7 @@ import java.util.*
 
 //private const val FIVE_MIN_IN_MILIS = 300000L todo
 private const val FIVE_MIN_IN_MILIS = 30L
+const val NO_ID_GIVEN_CODE = -1L
 
 fun dateToTimestamp(dateString: String): Long {
     return SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault()).parse(dateString)!!.time
@@ -128,7 +129,7 @@ inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
         override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
     }
 
-fun createTaskNotification(task: Task, context: Context) {
+fun createTaskNotificationPendingEvent(task: Task, context: Context) {
     if (task.done || task.date == null || task.date!! - System.currentTimeMillis() < FIVE_MIN_IN_MILIS)
         return
     val intent = Intent(context, AlarmReceiver::class.java)
@@ -138,7 +139,7 @@ fun createTaskNotification(task: Task, context: Context) {
         context.applicationContext,
         task.uid.toInt(),
         intent,
-        0
+       FLAG_ONE_SHOT
     )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -148,25 +149,25 @@ fun createTaskNotification(task: Task, context: Context) {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.date!!, pendingIntent)
 }
 
-fun removeTaskNotification(task: Task, context: Context) {
+fun removeTaskNotificationPendingEvent(task: Task, context: Context) {
     val intent = Intent(context, AlarmReceiver::class.java)
     val pendingIntent = PendingIntent.getBroadcast(
         context.applicationContext,
         task.uid.toInt(),
         intent,
-        FLAG_UPDATE_CURRENT
+        0
     )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     alarmManager.cancel(pendingIntent)
 }
 
-fun remakeAllNotifications(context: Context) {
+fun remakeAllNotificationsPendingEvents(context: Context) {
     GlobalScope.launch {
         withContext(Dispatchers.IO) {
             val data = DB.db.taskDao().getAllActiveTasks()
             data.forEach { task ->
-                removeTaskNotification(task, context)
-                createTaskNotification(task, context)
+                removeTaskNotificationPendingEvent(task, context)
+                createTaskNotificationPendingEvent(task, context)
             }
         }
     }

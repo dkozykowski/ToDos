@@ -20,12 +20,12 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent != null) {
             if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-                remakeAllNotifications(context!!)
+                remakeAllNotificationsPendingEvents(context!!)
             } else {
                 getDataFromIntent(intent)
                 createBuilder(context!!)
                 with(NotificationManagerCompat.from(context)) {
-                    notify(0, builder.build())
+                    notify(id!!.toInt(), builder.build())
                 }
             }
         }
@@ -41,7 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("id", id)
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, id!!.toInt(), intent, 0)
         builder = NotificationCompat.Builder(context, context.getString(R.string.channel_id))
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("ToDos: One pending task!")

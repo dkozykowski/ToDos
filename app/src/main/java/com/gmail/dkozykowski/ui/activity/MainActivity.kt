@@ -20,15 +20,14 @@ import com.gmail.dkozykowski.data.model.Task
 import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.model.ActionBarButtonModel
 import com.gmail.dkozykowski.ui.fragment.BaseFragment
-import com.gmail.dkozykowski.utils.remakeAllNotifications
+import com.gmail.dkozykowski.utils.NO_ID_GIVEN_CODE
+import com.gmail.dkozykowski.utils.remakeAllNotificationsPendingEvents
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-const val NO_ID_GIVEN_CODE = -1L
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         DB.createDatabase(this)
         setSupportActionBar(applicationToolbar)
         createNotificationChannel()
-        remakeAllNotifications(this)
+        remakeAllNotificationsPendingEvents(this)
         checkIfApplicationWasEverStarted()
         previewTaskIfAppStartedFromNotification()
     }
