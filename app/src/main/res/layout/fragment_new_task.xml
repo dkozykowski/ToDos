@@ -28,7 +28,8 @@
                 android:background="@android:color/transparent"
                 android:hint="Title"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
-                android:maxLength="20" />
+                android:maxLength="35"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -51,7 +52,8 @@
                 android:background="@android:color/transparent"
                 android:hint="Description"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
-                android:maxLines="12" />
+                android:maxLines="10"
+                android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -107,7 +109,7 @@
             app:layout_constraintTop_toTopOf="@id/dateInputLayout" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/RemoveDateButtonIcon"
+            android:id="@+id/removeDateButtonIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"

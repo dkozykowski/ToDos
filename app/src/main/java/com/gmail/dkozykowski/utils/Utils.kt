@@ -1,7 +1,6 @@
 package com.gmail.dkozykowski.utils
 
 import android.app.*
-import android.app.PendingIntent.FLAG_ONE_SHOT
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
@@ -139,7 +138,7 @@ fun createTaskNotificationPendingEvent(task: Task, context: Context) {
         context.applicationContext,
         task.uid.toInt(),
         intent,
-       FLAG_ONE_SHOT
+        FLAG_UPDATE_CURRENT
     )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -155,7 +154,7 @@ fun removeTaskNotificationPendingEvent(task: Task, context: Context) {
         context.applicationContext,
         task.uid.toInt(),
         intent,
-        0
+        FLAG_UPDATE_CURRENT
     )
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     alarmManager.cancel(pendingIntent)

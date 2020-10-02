@@ -1,6 +1,7 @@
 package com.gmail.dkozykowski.ui.fragment
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -18,6 +19,7 @@ import com.gmail.dkozykowski.model.UpdateTaskDataModel
 import com.gmail.dkozykowski.ui.activity.MainActivity
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import com.gmail.dkozykowski.viewmodel.TaskViewModel.UpdateViewState.Loading
 import com.gmail.dkozykowski.viewmodel.TaskViewModel.UpdateViewState.Success
 
 class PreviewTaskFragment : BaseFragment() {
@@ -61,6 +63,7 @@ class PreviewTaskFragment : BaseFragment() {
     }
 
     private fun loadSetupFunctions() {
+        setupDescriptionTextView()
         setupActionBarButtonsHandlers()
         setupViewModel()
         setViewToCurrentMode()
@@ -72,6 +75,10 @@ class PreviewTaskFragment : BaseFragment() {
         setupRemoveDateButton()
         setupLeftActionBarButton()
         setupRightActionBarButton()
+    }
+
+    private fun setupDescriptionTextView() {
+        binding.descriptionText.movementMethod = ScrollingMovementMethod()
     }
 
     private fun setupActionBarButtonsHandlers() {
@@ -98,7 +105,7 @@ class PreviewTaskFragment : BaseFragment() {
         with(binding) {
             titleEditText.setText(taskTitle)
             descriptionEditText.setText(taskDescription)
-            if (taskDate != null) dateEditText.setText(timestampToDate(taskDate!!))
+            dateEditText.setText(if (taskDate != null) timestampToDate(taskDate!!) else "")
             editModeLayout.visibility = VISIBLE
             previewModeLayout.visibility = GONE
         }
@@ -226,7 +233,7 @@ class PreviewTaskFragment : BaseFragment() {
                 isTaskEditModeOn = false
                 setViewToCurrentMode()
             }
-        } else if (viewModel.updateTaskLiveData.value is Success) findNavController().navigateUp()
+        } else if (viewModel.updateTaskLiveData.value !is Loading) findNavController().navigateUp()
     }
 
     private fun loadTask() {
@@ -242,11 +249,29 @@ class PreviewTaskFragment : BaseFragment() {
 
 
     private fun wasEditTaskSheetEdited(): Boolean {
-        if (binding.titleEditText.text() != taskTitle ||
-            binding.descriptionEditText.text() != taskDescription ||
-            dateToTimestamp(binding.dateEditText.text()) != taskDate
-        ) return true
-        return false
+        return when {
+            wasTitleEdited() -> true
+            wasDescriptionEdited() -> true
+            wasDateEdited() -> true
+            else -> false
+        }
+    }
+
+    private fun wasTitleEdited(): Boolean {
+        return binding.titleEditText.text() != taskTitle
+    }
+
+    private fun wasDescriptionEdited(): Boolean {
+        return binding.descriptionEditText.text() != taskDescription
+    }
+
+    private fun wasDateEdited(): Boolean {
+        return when {
+            binding.dateEditText.text().isNullOrBlank() && taskDate != null -> true
+            binding.dateEditText.text().isNullOrBlank() && taskDate == null -> false
+            dateToTimestamp(binding.dateEditText.text()) != taskDate -> true
+            else -> false
+        }
     }
 
     private fun showExitDialog() {

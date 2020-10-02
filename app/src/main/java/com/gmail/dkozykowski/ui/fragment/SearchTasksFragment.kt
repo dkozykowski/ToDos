@@ -84,6 +84,7 @@ class SearchTasksFragment : BaseFragment() {
         setupRootOnClickEvent()
         setupSearchButton()
         setupUpdateFiltersViewButton()
+        setupRemoveDateButtons()
     }
 
     private fun setupRootOnClickEvent() {
@@ -102,6 +103,15 @@ class SearchTasksFragment : BaseFragment() {
             areFiltersShown = !areFiltersShown
             binding.filtersLayout.visibility = if (areFiltersShown) VISIBLE else GONE
             animateUpdateFiltersViewButtonRotation()
+        }
+    }
+
+    private fun setupRemoveDateButtons() {
+        binding.removeEndDateButton.setOnClickListener {
+            binding.endDateEditText.text = null
+        }
+        binding.removeStartDateButton.setOnClickListener {
+            binding.startDateEditText.text = null
         }
     }
 

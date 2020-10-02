@@ -19,7 +19,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/filtersLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,8 @@
                 android:layout_marginEnd="16dp"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
                 app:startIconCheckable="true"
-                app:startIconDrawable="@drawable/ic_round_title_24">
+                app:startIconDrawable="@drawable/ic_round_title_24"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/titleEditText"
@@ -62,7 +63,8 @@
                 android:layout_marginEnd="16dp"
                 android:inputType="textFilter|textMultiLine|textNoSuggestions"
                 app:startIconCheckable="true"
-                app:startIconDrawable="@drawable/ic_round_description_24">
+                app:startIconDrawable="@drawable/ic_round_description_24"
+                app:layout_constraintTop_toBottomOf="@id/titleEditTextLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/descriptionEditText"
@@ -89,7 +91,7 @@
                 android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/descriptionInputLayout"
+                app:layout_constraintTop_toBottomOf="@id/descriptionEditTextLayout"
                 app:startIconCheckable="true"
                 app:startIconDrawable="@drawable/ic_calendar_24">
 
@@ -105,6 +107,29 @@
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/removeStartDateButton"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                android:backgroundTint="@android:color/transparent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/startDateInputLayout"
+                app:layout_constraintEnd_toEndOf="@id/startDateInputLayout"
+                app:layout_constraintTop_toTopOf="@id/startDateInputLayout" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/removeDateButtonIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@drawable/ic_round_close_24"
+                app:layout_constraintBottom_toBottomOf="@id/removeStartDateButton"
+                app:layout_constraintEnd_toEndOf="@id/removeStartDateButton"
+                app:layout_constraintStart_toStartOf="@id/removeStartDateButton"
+                app:layout_constraintTop_toTopOf="@id/removeStartDateButton" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/endDateInputLayout"
@@ -119,7 +144,7 @@
                 android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
+                app:layout_constraintTop_toBottomOf="@id/startDateInputLayout"
                 app:startIconCheckable="true"
                 app:startIconDrawable="@drawable/ic_calendar_24">
 
@@ -136,6 +161,30 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/removeEndDateButton"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                android:backgroundTint="@android:color/transparent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/endDateInputLayout"
+                app:layout_constraintEnd_toEndOf="@id/endDateInputLayout"
+                app:layout_constraintTop_toTopOf="@id/endDateInputLayout" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/removeEndDateButtonIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@drawable/ic_round_close_24"
+                app:layout_constraintBottom_toBottomOf="@id/removeEndDateButton"
+                app:layout_constraintEnd_toEndOf="@id/removeEndDateButton"
+                app:layout_constraintStart_toStartOf="@id/removeEndDateButton"
+                app:layout_constraintTop_toTopOf="@id/removeEndDateButton" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/searchButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -145,9 +194,10 @@
                 android:layout_marginBottom="4dp"
                 android:text="Search"
                 app:icon="@drawable/ic_round_search_24"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@id/endDateInputLayout"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:id="@+id/line1"
