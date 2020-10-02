@@ -138,6 +138,7 @@ class SearchTasksFragment : BaseFragment() {
     }
 
     override fun onBackPressed() {
+        hideKeyboard(context!!, binding.root)
         findNavController().navigateUp()
     }
 

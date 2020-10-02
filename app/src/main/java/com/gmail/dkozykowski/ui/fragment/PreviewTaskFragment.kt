@@ -226,6 +226,7 @@ class PreviewTaskFragment : BaseFragment() {
     }
 
     override fun onBackPressed() {
+        hideKeyboard(context!!, binding.root)
         if (isTaskEditModeOn) {
             if (wasEditTaskSheetEdited()) {
                 showExitDialog()

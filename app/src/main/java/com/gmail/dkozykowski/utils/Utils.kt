@@ -22,8 +22,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-//private const val FIVE_MIN_IN_MILIS = 300000L todo
-private const val FIVE_MIN_IN_MILIS = 30L
+private const val FIVE_MIN_IN_MILIS = 300000L
 const val NO_ID_GIVEN_CODE = -1L
 
 fun dateToTimestamp(dateString: String): Long {

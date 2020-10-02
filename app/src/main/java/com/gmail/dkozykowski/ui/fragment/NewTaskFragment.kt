@@ -154,6 +154,7 @@ class NewTaskFragment : BaseFragment() {
     }
 
     override fun onBackPressed() {
+        hideKeyboard(context!!, binding.root)
         with(binding) {
             if (titleEditText.isTextBlank() && descriptionEditText.isTextBlank() &&
                 dateEditText.isTextBlank()

@@ -21,6 +21,7 @@ import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.model.ActionBarButtonModel
 import com.gmail.dkozykowski.ui.fragment.BaseFragment
 import com.gmail.dkozykowski.utils.NO_ID_GIVEN_CODE
+import com.gmail.dkozykowski.utils.hideKeyboard
 import com.gmail.dkozykowski.utils.remakeAllNotificationsPendingEvents
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
