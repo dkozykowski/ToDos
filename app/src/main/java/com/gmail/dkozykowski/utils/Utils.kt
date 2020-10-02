@@ -3,6 +3,7 @@ package com.gmail.dkozykowski.utils
 import android.app.*
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
@@ -63,6 +64,7 @@ fun getTimeLeftText(date: Long): String {
 }
 
 fun openPickDateDialog(context: Context, dateEditText: TextInputEditText, startDate: Long? = null) {
+    var newDateText: String? = null
     val calendar = Calendar.getInstance()
     if (startDate != null) calendar.timeInMillis = startDate
     if (!dateEditText.isTextBlank()) {
@@ -76,19 +78,17 @@ fun openPickDateDialog(context: Context, dateEditText: TextInputEditText, startD
     val timePickerDialog = TimePickerDialog(
         context,
         { _, hour, minute ->
-            dateEditText.setText("${dateEditText.text} %02d:%02d".format(hour, minute))
+            dateEditText.setText("$newDateText %02d:%02d".format(hour, minute))
         },
         calendar.get(Calendar.HOUR_OF_DAY),
         calendar.get(Calendar.MINUTE),
         true
     )
-    timePickerDialog.setOnCancelListener { dateEditText.text = null }
-    timePickerDialog.setOnDismissListener { dateEditText.text = null }
 
     DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
-            dateEditText.setText("%02d.%02d.%d".format(dayOfMonth, month + 1, year))
+            newDateText = "%02d.%02d.%d".format(dayOfMonth, month + 1, year)
             timePickerDialog.show()
         },
         calendar.get(Calendar.YEAR),
