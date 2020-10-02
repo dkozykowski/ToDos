@@ -83,6 +83,7 @@ fun openPickDateDialog(context: Context, dateEditText: TextInputEditText, startD
         true
     )
     timePickerDialog.setOnCancelListener { dateEditText.text = null }
+    timePickerDialog.setOnDismissListener { dateEditText.text = null }
 
     DatePickerDialog(
         context,
