@@ -25,6 +25,8 @@ import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.AWAITI
 import com.gmail.dkozykowski.ui.fragment.SearchTasksFragment.LoadingState.DONE
 import com.gmail.dkozykowski.utils.*
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import com.gmail.dkozykowski.viewmodel.TaskViewModel.LoadViewState
+import com.gmail.dkozykowski.viewmodel.TaskViewModel.LoadViewState.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class SearchTasksFragment : BaseFragment() {
@@ -122,19 +124,12 @@ class SearchTasksFragment : BaseFragment() {
 
     private fun setupLoadTaskLiveDataObserver() {
         viewModel.loadTaskLiveData.observe(viewLifecycleOwner, Observer { viewState ->
-            when (viewState) {
-                is TaskViewModel.LoadViewState.Error -> showErrorMessageToast(viewState.errorMessage)
-                is TaskViewModel.LoadViewState.Success -> {
-                    adapter.updateData(viewState.data)
-                    updateEmptyInfo()
-                    showSearchButtonResultAwaitingToast()
-                }
-            }
+           if (viewState is Success) {
+               adapter.updateData(viewState.data)
+               updateEmptyInfo()
+               showSearchButtonResultAwaitingToast()
+           }
         })
-    }
-
-    private fun showErrorMessageToast(errorMessage: String) {
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun onBackPressed() {

@@ -8,8 +8,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,12 +20,13 @@ import com.gmail.dkozykowski.ui.adapter.TaskAdapter
 import com.gmail.dkozykowski.utils.setAsVisible
 import com.gmail.dkozykowski.utils.viewModelFactory
 import com.gmail.dkozykowski.viewmodel.TaskViewModel
+import com.gmail.dkozykowski.viewmodel.TaskViewModel.LoadViewState.Success
 
 class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : PageFragment() {
     lateinit var binding: FragmentActiveTasksBinding
     private val adapter by lazy { TaskAdapter(ALL_ACTIVE, ::showEmptyInfo, updateIdlePage) }
-    private val viewModel by lazy{
-       ViewModelProvider(
+    private val viewModel by lazy {
+        ViewModelProvider(
             this,
             viewModelFactory { TaskViewModel(ALL_ACTIVE) }
         ).get(TaskViewModel::class.java)
@@ -56,18 +55,11 @@ class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
 
     private fun setupLoadTaskLiveDataObserver() {
         viewModel.loadTaskLiveData.observe(viewLifecycleOwner, Observer { viewState ->
-            when (viewState) {
-                is TaskViewModel.LoadViewState.Error -> showErrorMessageToast(viewState.errorMessage)
-                is TaskViewModel.LoadViewState.Success -> {
-                    adapter.updateData(viewState.data)
-                    updateEmptyInfo()
-                }
+            if (viewState is Success) {
+                adapter.updateData(viewState.data)
+                updateEmptyInfo()
             }
         })
-    }
-
-    private fun showErrorMessageToast(errorMessage: String) {
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     private fun updateEmptyInfo() {
@@ -106,7 +98,7 @@ class ActiveTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) :
     }
 
     override fun reloadTasks() {
-        if(isAdded) viewModel.loadTasksWithoutFilters()
+        if (isAdded) viewModel.loadTasksWithoutFilters()
     }
 
     override fun onAttach(context: Context) {

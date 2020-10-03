@@ -53,7 +53,7 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    val tasks = getFilteredTaskSFromDatabase(filterTaskData)
+                    val tasks = getFilteredTasksFromDatabase(filterTaskData)
                     loadTaskLiveData.postValue(LoadViewState.Success(tasks))
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -63,10 +63,11 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
         }
     }
 
-    private fun getFilteredTaskSFromDatabase(filterTaskData: FilterTaskDataModel): List<Task> {
+    private fun getFilteredTasksFromDatabase(filterTaskData: FilterTaskDataModel): List<Task> {
         with(filterTaskData) {
-            return DB.db.taskDao()
-                .getFilteredTasks(title, description, timeLowerBound, timeUpperBound)
+            return if (timeLowerBound == 0L && timeUpperBound == Long.MAX_VALUE) DB.db.taskDao()
+                .getFilteredTasksWithoutDate(title, description) else DB.db.taskDao()
+                .getFilteredTasksWithDate(title, description, timeLowerBound, timeUpperBound)
         }
     }
 
@@ -96,7 +97,6 @@ class TaskViewModel(private val queryType: QueryTaskType) : ViewModel() {
                     getTaskFromDatabaseAndUpdate(updateTaskData)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    updateTaskLiveData.postValue(UpdateViewState.Error(e.message.toString()))
                 }
             }
         }

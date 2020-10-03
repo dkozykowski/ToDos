@@ -68,6 +68,7 @@ class TaskAdapter(
             withContext(Dispatchers.IO) {
                 try {
                     DB.db.taskDao().deleteTask(task)
+                    removeTaskNotificationPendingEvent(task, context)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

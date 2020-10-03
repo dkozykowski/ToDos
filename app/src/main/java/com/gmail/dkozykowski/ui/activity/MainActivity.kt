@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
@@ -21,7 +22,6 @@ import com.gmail.dkozykowski.databinding.ActivityMainBinding
 import com.gmail.dkozykowski.model.ActionBarButtonModel
 import com.gmail.dkozykowski.ui.fragment.BaseFragment
 import com.gmail.dkozykowski.utils.NO_ID_GIVEN_CODE
-import com.gmail.dkozykowski.utils.hideKeyboard
 import com.gmail.dkozykowski.utils.remakeAllNotificationsPendingEvents
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
@@ -105,9 +105,16 @@ class MainActivity : AppCompatActivity() {
                     val task = DB.db.taskDao().getTaskById(id)
                     previewTask(task)
                 } catch (e: Exception) {
+                    showTaskDoesNotExistToast()
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    private fun showTaskDoesNotExistToast() {
+        this.runOnUiThread {
+            Toast.makeText(this, "This task does not exist anymore", Toast.LENGTH_LONG).show()
         }
     }
 

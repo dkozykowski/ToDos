@@ -3,7 +3,6 @@ package com.gmail.dkozykowski.utils
 import android.app.*
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
@@ -23,7 +22,8 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val FIVE_MIN_IN_MILIS = 300000L
+//private const val FIVE_MIN_IN_MILIS = 300000L todo
+private const val FIVE_MIN_IN_MILIS = 3
 const val NO_ID_GIVEN_CODE = -1L
 
 fun dateToTimestamp(dateString: String): Long {
