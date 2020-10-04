@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/viewPagerFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.ViewPagerFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.ViewPagerFragment"
         android:label="Manage tasks"
         tools:layout="@layout/fragment_view_pager">
         <action
@@ -22,29 +22,29 @@
     </fragment>
     <fragment
         android:id="@+id/newTaskFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.NewTaskFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.NewTaskFragment"
         android:label="Add a new task"
         tools:layout="@layout/fragment_new_task" />
     <fragment
         android:id="@+id/previewTaskFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.PreviewTaskFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.PreviewTaskFragment"
         android:label="Preview the task"
         tools:layout="@layout/fragment_preview_task" />
     <fragment
         android:id="@+id/activeTasksFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.TodaysTasksFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.TodaysTasksFragment"
         tools:layout="@layout/fragment_active_tasks" />
     <fragment
         android:id="@+id/todaysTasksFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.TodaysTasksFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.TodaysTasksFragment"
         tools:layout="@layout/fragment_todays_tasks" />
     <fragment
         android:id="@+id/doneTasksFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.DoneTasksFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.DoneTasksFragment"
         tools:layout="@layout/fragment_done_tasks" />
     <fragment
         android:id="@+id/searchTasksFragment"
-        android:name="com.gmail.dkozykowski.ui.fragment.SearchTasksFragment"
+        android:name="com.gmail.applicationtodos.ui.fragment.SearchTasksFragment"
         android:label="Search tasks"
         tools:layout="@layout/fragment_search_tasks">
         <action

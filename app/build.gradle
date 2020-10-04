@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "com.gmail.dkozykowski"
+        applicationId "com.gmail.applicationtodos"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

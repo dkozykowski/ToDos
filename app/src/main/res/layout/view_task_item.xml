@@ -79,7 +79,7 @@
             app:layout_constraintEnd_toStartOf="@+id/doneCheckbox"
             app:layout_constraintTop_toTopOf="@+id/title">
 
-            <com.gmail.dkozykowski.ui.view.StarCheckboxView
+            <com.gmail.applicationtodos.ui.view.StarCheckboxView
                 android:id="@+id/importantTaskCheckbox"
                 android:layout_width="32dp"
                 android:layout_height="32dp"/>
