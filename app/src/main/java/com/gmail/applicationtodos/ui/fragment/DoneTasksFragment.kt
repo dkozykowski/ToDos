@@ -22,7 +22,8 @@ import com.gmail.applicationtodos.utils.viewModelFactory
 import com.gmail.applicationtodos.viewmodel.TaskViewModel
 import com.gmail.applicationtodos.viewmodel.TaskViewModel.LoadViewState.Success
 
-class DoneTasksFragment(private val updateIdlePage: (QueryTaskType) -> Unit) : PageFragment() {
+class DoneTasksFragment : PageFragment() {
+    lateinit var updateIdlePage: (QueryTaskType) -> Unit
     lateinit var binding: FragmentDoneTasksBinding
     private val adapter by lazy { TaskAdapter( DONE, ::showEmptyInfo, updateIdlePage)}
     private val viewModel by lazy{

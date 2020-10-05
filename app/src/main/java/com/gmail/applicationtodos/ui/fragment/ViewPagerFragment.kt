@@ -21,14 +21,13 @@ import kotlin.system.exitProcess
 class ViewPagerFragment : BaseFragment() {
     private lateinit var binding: FragmentViewPagerBinding
     private val pages = arrayOf(
-        TodaysTasksFragment(::updateIdlePage),
-        ActiveTasksFragment(::updateIdlePage),
-        DoneTasksFragment(::updateIdlePage)
+        TodaysTasksFragment(),
+        ActiveTasksFragment(),
+        DoneTasksFragment()
     )
     private val titles = arrayOf("Today's", "Active", "Done")
     override var leftActionBarButtonHandler: ActionBarButtonModel? = null
     override var rightActionBarButtonHandler: ActionBarButtonModel? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +39,7 @@ class ViewPagerFragment : BaseFragment() {
         setupViewPager()
         setupLeftActionBarButton()
         setupRightActionBarButton()
+        setupPageFragments()
         return binding.root
     }
 
@@ -72,6 +72,12 @@ class ViewPagerFragment : BaseFragment() {
         rightActionBarButtonHandler?.setOnClickListener {
             findNavController().navigate(R.id.action_viewPagerFragment_to_searchTasksFragment)
         }
+    }
+
+    private fun setupPageFragments() {
+        (pages[0] as TodaysTasksFragment).updateIdlePage = ::updateIdlePage
+        (pages[1] as ActiveTasksFragment).updateIdlePage = ::updateIdlePage
+        (pages[2] as DoneTasksFragment).updateIdlePage = ::updateIdlePage
     }
 
     override fun onBackPressed() {
