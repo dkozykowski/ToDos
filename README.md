@@ -1,8 +1,6 @@
 # ToDos
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A 'To Do List' android application, that helps you menage all your duties and remember about 
-
 ## Overview
 
 Todos is a 'To Do List' android application, that helps users manage all their duties. It also allows to create notifications on specific time, to always be on schedule.
